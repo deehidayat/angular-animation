@@ -127,31 +127,31 @@
 
 
         // start the music
-        bgMusic = createjs.Sound.play("music2", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
+        // bgMusic = createjs.Sound.play("music2", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
 
         watchRestart();
     }
-
-    function muteBgMusic() {
-        bgMusic.volume = 0;
-    }
-  function toggleFullScreen() {
-
-  var videoElement = document.getElementById("fullscreen-container");
-    if (!document.mozFullScreen && !document.webkitFullScreen) {
-      if (videoElement.mozRequestFullScreen) {
-        videoElement.mozRequestFullScreen();
-      } else {
-        videoElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-      }
-    } else {
-      if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else {
-        document.webkitCancelFullScreen();
-      }
-    }
-  }
+//
+    // function muteBgMusic() {
+        // bgMusic.volume = 0;
+    // }
+  // function toggleFullScreen() {
+//
+  // var videoElement = document.getElementById("fullscreen-container");
+    // if (!document.mozFullScreen && !document.webkitFullScreen) {
+      // if (videoElement.mozRequestFullScreen) {
+        // videoElement.mozRequestFullScreen();
+      // } else {
+        // videoElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+      // }
+    // } else {
+      // if (document.mozCancelFullScreen) {
+        // document.mozCancelFullScreen();
+      // } else {
+        // document.webkitCancelFullScreen();
+      // }
+    // }
+  // }
 
     function watchRestart() {
         //watch for clicks
