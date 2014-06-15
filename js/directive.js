@@ -51,10 +51,12 @@ angular.module('DeeDirective',[])
 
             var canvas;         //Main canvas
             var stage;          //Main display stage
+            var width, height;
 
             var ship;           //the actual ship
             var alive;          //wheter the player is alive
 
+            var bgImage;
             var messageField;       //Message display field
             var scoreField;         //score Field
 
@@ -71,6 +73,9 @@ angular.module('DeeDirective',[])
                 canvas = elem[0];
                 stage = new createjs.Stage(canvas);
 
+                width = stage.canvas.width;
+                height = stage.canvas.height;
+
                 // enable touch interactions if supported on the current device:
                 createjs.Touch.enable(stage);
 
@@ -83,9 +88,13 @@ angular.module('DeeDirective',[])
                 messageField.textAlign = "center";
                 messageField.x = canvas.width / 2;
                 messageField.y = canvas.height / 2;
-                stage.addChild(messageField);
 
-                // Mute Button
+                var img = new createjs.Bitmap("assets/sky.png");
+
+                bgImage = new createjs.Shape();
+                bgImage.graphics.beginBitmapFill(img.image).drawRect(0,0,width,height);
+
+                stage.addChild(bgImage, messageField);
                 stage.update();
                 //update the stage to show text
 
@@ -148,27 +157,6 @@ angular.module('DeeDirective',[])
 
                 watchRestart();
             }
-        //
-            // function muteBgMusic() {
-                // bgMusic.volume = 0;
-            // }
-          // function toggleFullScreen() {
-        //
-          // var videoElement = document.getElementById("fullscreen-container");
-            // if (!document.mozFullScreen && !document.webkitFullScreen) {
-              // if (videoElement.mozRequestFullScreen) {
-                // videoElement.mozRequestFullScreen();
-              // } else {
-                // videoElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-              // }
-            // } else {
-              // if (document.mozCancelFullScreen) {
-                // document.mozCancelFullScreen();
-              // } else {
-                // document.webkitCancelFullScreen();
-              // }
-            // }
-          // }
 
             function watchRestart() {
                 //watch for clicks
@@ -179,7 +167,7 @@ angular.module('DeeDirective',[])
 
             function handleClick() {
                 //prevent extra clicks and hide text
-                canvas.onclick = null;
+                // canvas.onclick = null;
                 stage.removeChild(messageField);
 
                 // indicate the player is now on screen
@@ -220,6 +208,7 @@ angular.module('DeeDirective',[])
                 if (!createjs.Ticker.hasEventListener("tick")) {
                   createjs.Ticker.addEventListener("tick", tick);
                 }
+                // stage.update();
             }
 
             function tick() {

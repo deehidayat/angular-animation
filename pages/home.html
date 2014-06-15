@@ -15,40 +15,37 @@
                     </div>
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-                        <li>
+                        <!-- <li>
                             <a href="dashboard.html" target="_blank">
                                 <i class="glyphicon glyphicon-dashboard"></i> <span>Dashboard</span>
                             </a>
-                        </li>
-                        <li class="treeview" treeview>
-                            <a href="javascript:void(0);">
-                                <i class="glyphicon glyphicon-cog"></i> <span>Pengaturan</span><i class="fa fa-angle-left pull-right"></i>
+                        </li> -->
+                        <li class="treeview">
+                            <a href="javascript:void(0);" ng-click="openSetting()">
+                                <i class="glyphicon glyphicon-cog"></i> <span>Pengaturan</span>
                             </a>
-                            <ul class="treeview-menu">
-                                <li><a href="javascript:void(0);"><i class="glyphicon glyphicon-volume-up"></i> Sound</a></li>
-                            </ul>
                         </li>
                         <li>
-                            <a href="javascript:void(0);">
+                            <a href="javascript:void(0);" ng-click="openHelp()">
                                 <i class="glyphicon glyphicon-question-sign"></i> <span>Bantuan</span>
                             </a>
                         </li>
                         <li>
-                            <a href="javascript:void(0);">
+                            <a href="javascript:void(0);" ng-click="openAbout()">
                                 <i class="glyphicon glyphicon-info-sign"></i> <span>Tentang Aplikasi</span>
                             </a>
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="javascript:void(0);">
                                 <i class="glyphicon glyphicon-remove"></i> <span>Keluar</span>
                             </a>
-                        </li>
+                        </li> -->
                         <!-- <li>
                             <a href="pages/widgets.html">
                                 <i class="fa fa-th"></i> <span>Widgets</span> <small class="badge pull-right bg-green">new</small>
                             </a>
                         </li> -->
-                        <li class="treeview" treeview>
+                        <!-- <li class="treeview" treeview>
                             <a href="#">
                                 <i class="fa fa-bar-chart-o"></i>
                                 <span>Charts</span>
@@ -59,7 +56,7 @@
                                 <li><a href="pages/charts/flot.html"><i class="fa fa-angle-double-right"></i> Flot</a></li>
                                 <li><a href="pages/charts/inline.html"><i class="fa fa-angle-double-right"></i> Inline charts</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                     </ul>
                 </section>
                 <!-- /.sidebar -->
@@ -80,12 +77,12 @@
                 <!-- Main content -->
                 <section class="content" style="padding-top: 0; background-color: #000; position: relative;">
 
-                    <a href="javascript:void(0);" data-toggle="offcanvas" role="button" style="position:absolute; left: 0; top: 0px; font-size: 20px; color: white; margin: 20px;">
+                    <!-- <a href="javascript:void(0);" data-toggle="offcanvas" role="button" style="position:absolute; left: 0; top: 0px; font-size: 20px; color: white; margin: 20px;">
                         <i class="glyphicon glyphicon-tasks"></i>
-                    </a>
+                    </a> -->
                     <!-- top row -->
                     <div class="row" style="text-align:center;">
-                        <canvas id="gameCanvas" width="960" height="400" style=" width: 100%; height: 100%;" game></canvas>
+                        <canvas id="gameCanvas" width="960" height="400" style=" width: 100%; height: 100%; border: 1px solid white;" game></canvas>
                     </div>
                     <!-- /.row -->
 
