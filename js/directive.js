@@ -13,18 +13,9 @@ angular.module('DeeDirective',['Constructor'])
         }
     };
 }])
-.directive('game', ['LoadingBar', 'BitmapButton', 'Player', 'Grant', 'RedBird', 'BlueBird', function(LoadingBar, BitmapButton, Player, Grant, RedBird, BlueBird){
+.directive('game', ['$modal', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($modal, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
     return {
         link : function(scope, elem) {
-
-            // var DIFFICULTY = 2;         //how fast the game gets mor difficult
-            // var ROCK_TIME = 110;        //aprox tick count untill a new asteroid gets introduced
-            // var SUB_ROCK_COUNT = 4;     //how many small rocks to make on rock death
-            // var BULLET_TIME = 5;        //ticks between bullets
-            // var BULLET_ENTROPY = 100;   //how much energy a bullet has before it runs out.
-//
-            // var TURN_FACTOR = 7;        //how far the ship turns per frame
-            // var BULLET_SPEED = 17;      //how fast the bullets move
 
             var KEYCODE_ENTER = 13;     //usefull keycode
             var KEYCODE_SPACE = 32;     //usefull keycode
@@ -42,21 +33,11 @@ angular.module('DeeDirective',['Constructor'])
             var rtHeld;             //is the user holding a turn right command
             var fwdHeld;            //is the user holding a forward command
 
-            // var timeToRock;         //difficulty adjusted version of ROCK_TIME
-            // var nextRock;           //ticks left untill a new space rock arrives
-            // var nextBullet;         //ticks left untill the next shot is fired
-//
-            // var rockBelt;           //space rock array
-            // var bulletStream;       //bullet array
-
             var canvas;         //Main canvas
             var stage;          //Main display stage
             var width, height;  // Canvas w - h
             var loadingInterval = 0;
             var bgMusic;
-
-            // var ship;           //the actual ship
-            // var alive;          //wheter the player is alive
 
             var splashContainer;
             var bgImage;
@@ -74,9 +55,13 @@ angular.module('DeeDirective',['Constructor'])
 
 
             var player, guru = new Array();
+            var distance = 0;
             var sky, fog, fog2, ground, hill, hill2, grant, bird; // BAckground
             var mainContainer;
             var currentState; // menu | belajar | quiz
+            var bubbleContainer, speechBubble, speechText;
+            var hypnosis =  ["Belajar Biologi itu menyenangkan", "Belajar Biologi itu mudah", "Belajar Biologi itu tidak susah"];
+            var hypnosisText;
 
             //register key functions
             document.onkeydown = handleKeyDown;
@@ -114,10 +99,10 @@ angular.module('DeeDirective',['Constructor'])
                     id:'buttonQuiz',
                     src:'quizButton.png'
                 },
-                {
-                    id:"begin",
-                    src:"Game-Spawn.ogg"
-                },
+                // {
+                    // id:"begin",
+                    // src:"Game-Spawn.ogg"
+                // },
                 // {
                     // id:"break",
                     // src:"Game-Break.ogg",
@@ -140,7 +125,7 @@ angular.module('DeeDirective',['Constructor'])
                     // id:"music2",
                     // src:"M-GameBG.ogg"
                 // },
-                {src:"mc___main_characters_sprites_by_ssb_fan4ever-d53kkhx.png", id:"player"},
+                // {src:"mc___main_characters_sprites_by_ssb_fan4ever-d53kkhx.png", id:"player"},
                 {src:"layerneg2_fog.png", id:"fog"},
                 {src:"layerneg2_fog2.png", id:"fog2"},
                 {src:"sky.png", id:"sky"},
@@ -148,7 +133,7 @@ angular.module('DeeDirective',['Constructor'])
                 {src:"parallaxHill1.png", id:"hill"},
                 {src:"parallaxHill2.png", id:"hill2"},
                 // {src:"runningGrant.png", id:"grant"},
-                {src:"redBird.png", id:"redBird"},
+                // {src:"redBird.png", id:"redBird"},
                 ];
 
                 createjs.Sound.alternateExtensions = ["mp3"];
@@ -225,7 +210,7 @@ angular.module('DeeDirective',['Constructor'])
                 // stage.removeChild(splashContainer);
 
                 // indicate the player is now on screen
-                createjs.Sound.play("begin");
+                // createjs.Sound.play("begin");
 
                 restart();
             }
@@ -291,26 +276,70 @@ angular.module('DeeDirective',['Constructor'])
 
 
             }
-
+//
+            // function showHypnosis() {
+                // mainContainer.removeAllChildren();
+                // var rect = new createjs.Shape();
+                // rect.x = width * 0.2 / 2;
+                // rect.graphics.beginStroke("#FF0").setStrokeStyle(5).beginFill("#59554D").drawRoundRect(0, 0, width * 0.8, 300, 10).closePath();
+                // bubbleContainer.scaleX = bubbleContainer.scaleY = 1;
+                // var text = new
+            // }
+//
             function showBelajar() {
                 mainContainer.removeAllChildren();
-                player = new Player.create(preload.getResult("player"), {name:"Dede", index:0});
-                player.x = 0;
-                player.y = height - (preload.getResult("ground").height*2) - 64;
+                player = Player.create({name:"Ismet", index:0});
+                player.x = 300;
+                player.y = height - (preload.getResult("ground").height*1) - 64;
                 player.scaleX = player.scaleY = 2;
 
-                guru[0] = new Player.create(preload.getResult("player"), {name:"Dede", index:2});
-                guru[0].x = 300;
-                guru[0].y = height - (preload.getResult("ground").height*2) - 64;
+                // var dd = player.spriteSheet.getFrame(0);
+                // console.log(dd);
+
+                hypnosisText = new createjs.Text("--", "bold 30px Unkempt", "#59554D");
+                // hypnosisText.text = "Belajar biologi itu gampang";
+                // hypnosisText.x = 1000;
+                hypnosisText.y = height * 0.5;
+                hypnosisText.lineWidth = 300;
+                hypnosisText.visible = false;
+                mainContainer.addChild(hypnosisText);
+
+                guru[0] = Player.create({name:"Dede", index:2});
+                guru[0].x = 1500;
+                guru[0].y = height - (preload.getResult("ground").height*1) - 64;
                 guru[0].scaleX = guru[0].scaleY = 2;
 
+
                 guru[1] = BlueBird.create();
-                guru[1].x = 800;
-                guru[1].y = height - (preload.getResult("ground").height*2) - 64;
+                guru[1].x = 2500;
+                guru[1].y = height - (preload.getResult("ground").height*1) - 64;
                 guru[1].scaleX = guru[1].scaleY = 1;
 
+                bubbleContainer = new createjs.Container();
+                bubbleContainer.visible = false;
+                speechBubble = Bubble.create();
+                bubbleContainer.addChild(speechBubble);
+
+                // var rect = new createjs.Shape();
+                // rect.x = width * 0.2 / 2;
+                // rect.y = 100;
+                // rect.graphics.beginStroke("#FF0").setStrokeStyle(5).beginFill("#59554D").drawRoundRect(0, 0, width * 0.8, 300, 10).closePath();
+//
+//
+                // mainContainer.addChild(rect, hypnosisText);
+
+                speechBubble.y = player.y - 10 - 200;
+                speechBubble.x = player.x + 32 - 200;
+                speechBubble.scaleX = speechBubble.scaleY = 1;
+                // speechBubble.handleText("hay " + player.name + ", mau tau arti pernapasan?");
+                        // if(speechBubble.currentAnimation == "start") {
+                            // bubbleContainer.visible = true;
+                            // speechBubble.gotoAndPlay("birth");
+                        // }
+
+
                 currentState = 'belajar';
-                mainContainer.addChild(guru[0], guru[1], player);
+                mainContainer.addChild(bubbleContainer, guru[0], guru[1], player);
 
                 stage.addEventListener("click", function(e){
                     // console.log(e);
@@ -336,24 +365,27 @@ angular.module('DeeDirective',['Constructor'])
 
                 var groundImg = preload.getResult("ground");
                 ground = new createjs.Shape();
-                ground.graphics.beginBitmapFill(groundImg).drawRect(0, 0, width+groundImg.width, groundImg.height);
-                ground.scaleX = ground.scaleY = 2;
-                ground.tileW = groundImg.width * 2;
-                ground.y = height-groundImg.height * 2;
+                ground.graphics.beginBitmapFill(groundImg).drawRect(-groundImg.width, 0, width + 2 * groundImg.width, groundImg.height);
+                ground.scaleX = ground.scaleY = 1;
+                ground.tileW = groundImg.width * 1;
+                ground.y = height-groundImg.height * 1;
+                ground.cache(-groundImg.width, 0, width + 2 * groundImg.width, height);
 
                 hill = new createjs.Bitmap(preload.getResult("hill"));
                 hill.scaleX = hill.scaleY = 2;
-                hill.setTransform(Math.random() * width, height-hill.image.height*3-(groundImg.height*2), 3, 3);
+                hill.setTransform(Math.random() * width, height-hill.image.height*3-(groundImg.height*1), 3, 3);
+                hill.cache(0, 0, width, height);
 
                 hill2 = new createjs.Bitmap(preload.getResult("hill2"));
-                hill2.setTransform(Math.random() * width, height-hill2.image.height*3-(groundImg.height*2), 3, 3);
+                hill2.setTransform(Math.random() * width, height-hill2.image.height*3-(groundImg.height*1), 3, 3);
+                hill2.cache(0, 0, width, height);
 
                 fog = new createjs.Bitmap(preload.getResult("fog"));
-                fog.setTransform(Math.random() * width, height-fog.image.height*3-(groundImg.height*2), 3, 3);
+                fog.setTransform(Math.random() * width, height-fog.image.height*3-(groundImg.height*1), 3, 3);
                 fog.cache(0, 0, width, height);
 
                 fog2 = new createjs.Bitmap(preload.getResult("fog2"));
-                fog2.setTransform(Math.random() * width, height-fog2.image.height*3-(groundImg.height*2), 3, 3);
+                fog2.setTransform(Math.random() * width, height-fog2.image.height*3-(groundImg.height*1), 3, 3);
                 fog2.cache(0, 0, width, height);
 
                 bird = RedBird.create();
@@ -397,24 +429,62 @@ angular.module('DeeDirective',['Constructor'])
                 if (fog.x + fog.image.width* fog.scaleX <= 0) { fog.x = width; }
                 fog2.x = (fog2.x - deltaS * 45);
                 if (fog2.x + fog2.image.width*fog2.scaleX <= 0) { fog2.x = width; }
-                bird.x = (bird.x + deltaS * 50);
+                bird.x = (bird.x + deltaS * 100);
                 if (bird.x > width + 100) { bird.x = -100; bird.y = Math.random() * (height * 0.3); }
+                // if (bird.x <  -100) { bird.x = width + 100; bird.y = Math.random() * (height * 0.3); }
 
 
                 if(currentState == "belajar") {
                     player.tick();
+//
+                    // if(distance > 0 && player.x < guru[0].x) {
+                        // hypnosisText.text = hypnosis[Math.random()*3];
+                        // hypnosisText.visible = true;
+                    // }
 
                     // Guru 1
                     if(player.x < guru[0].x && player.x >= guru[0].x - 200) {
                         if(guru[0].currentAnimation != "standLeft")
                             guru[0].gotoAndPlay("standLeft");
+
+                        // console.log(speechBubble.currentAnimation);
+                        // if(speechBubble.currentAnimation == "idle") {
+                            speechBubble.scaleX = 1;
+                            speechBubble.y = guru[0].y - 10 - 200;
+                            speechBubble.x = guru[0].x + 32 - 200;
+                            speechBubble.handleText("hay " + player.name + ", mau tau arti pernapasan?");
+                        // } else
+                        if(speechBubble.currentAnimation == "start") {
+                            bubbleContainer.visible = true;
+                            speechBubble.gotoAndPlay("birth");
+                        }
+
+                        // speechBubble.scaleX = speechBubble.scaleY = 1;
                     } else if(player.x > guru[0].x && player.x <= guru[0].x + 200) {
                         if(guru[0].currentAnimation != "standRight")
                             guru[0].gotoAndPlay("standRight");
+
+                        // if(speechBubble.currentAnimation == "idle") {
+                            speechBubble.scaleX = -1;
+                            speechBubble.x = guru[0].x + 32 + 200;
+                            speechBubble.y = guru[0].y - 10 - 200;
+                            speechBubble.handleText("hay " + player.name + ", mau tau arti pernapasan?");
+                        // } else
+                        if(speechBubble.currentAnimation == "start") {
+                            bubbleContainer.visible = true;
+                            speechBubble.gotoAndPlay("birth");
+                        }
                     } else {
                         if(guru[0].currentAnimation != "stand")
                             guru[0].gotoAndPlay("stand");
                         // guru[1].gotoAndPlay("stand");
+
+                        if(speechBubble.currentAnimation == "idle") {
+                            speechBubble.gotoAndPlay("death");
+                            speechBubble.removeText();
+                            bubbleContainer.visible = false;
+                        }
+                        // speechBubble.scaleX = speechBubble.scaleY = 0;
                     }
 
                     // Guru 2
@@ -430,34 +500,57 @@ angular.module('DeeDirective',['Constructor'])
                         if(player && player.currentAnimation == "stand")
                             player.gotoAndPlay("walkRight");
 
+                        bird.x -= player.velocity.x;
+                        // // if(speechBubble.currentAnimation == "idle") {
+                            // speechBubble.scaleX = -1;
+                            // speechBubble.x = player.x + 32 + 200;
+                            // speechBubble.y = player.y - 10 - 200;
+                            // speechBubble.handleText("hay " + player.name + ", mau tau arti pernapasan?");
+                        // // } else
+
                         player.velocity.x = player.velocity.x * 0.9;
+                        distance += player.velocity.x;
+                        // console.log(distance);
                         if(player.x > (width * 0.5) - 64 && player.currentAnimation=="walkRight") {
                             ground.x = (ground.x - player.velocity.x) % ground.tileW;
+                            // console.log(ground.x);
                             hill.x = (hill.x - deltaS*30);
                             if (hill.x + hill.image.width*hill.scaleX <= 0) { hill.x = width; }
                             hill2.x = (hill2.x - deltaS*45);
                             if (hill2.x + hill2.image.width*hill2.scaleX <= 0) { hill2.x = width; }
                             guru[0].x -= player.velocity.x;
                             guru[1].x -= player.velocity.x;
+                            hypnosisText.x -= player.velocity.x;
                         } else if (player && player.currentAnimation == "walkRight") {
                             //moving the player
                             player.x += player.velocity.x;
                             player.y += player.velocity.y;
                         }
-                    } else if (lfHeld) {
+                    } else if (lfHeld && distance>=0) {
                         if(player && player.currentAnimation=="stand")
                             player.gotoAndPlay("walkLeft");
 
+                        bird.x -= player.velocity.x;
+                        // // if(speechBubble.currentAnimation == "idle") {
+                            // speechBubble.scaleX = -1;
+                            // speechBubble.x = player.x + 32 + 200;
+                            // speechBubble.y = player.y - 10 - 200;
+                            // speechBubble.handleText("hay " + player.name + ", mau tau arti pernapasan?");
+                        // // } else
+
                         player.velocity.x = player.velocity.x * 0.9;
-                        if(player.x < 0 && player.currentAnimation=="walkLeft") {
-                            ground.x = (ground.x + player.velocity.x * -1) % ground.tileW ;
-                            // console.log(ground.x, player.velocity.x, ground.tileW);
+                        distance += player.velocity.x;
+                        // console.log(distance);
+                        if(player.x < (width * 0.5) - 64 && player.currentAnimation=="walkLeft") {
+                            ground.x = (ground.x  + player.velocity.x * -1) % ground.tileW ;
+                            // console.log(ground.x);
                             hill.x = (hill.x + deltaS*30);
                             if (hill.x + hill.image.width*hill.scaleX <= 0) { hill.x = width; }
                             hill2.x = (hill2.x + deltaS*45);
                             if (hill2.x + hill2.image.width*hill2.scaleX <= 0) { hill2.x = width; }
-                            guru[0].x += player.velocity.x * -1;
-                            guru[1].x += player.velocity.x * -1;
+                            guru[0].x -= player.velocity.x;
+                            guru[1].x -= player.velocity.x;
+                            hypnosisText.x -= player.velocity.x;
                         } else if (player && player.currentAnimation == "walkLeft") {
                             //moving the player
                             player.x += player.velocity.x;
@@ -465,7 +558,12 @@ angular.module('DeeDirective',['Constructor'])
                         }
                     } else if(player.currentAnimation != "stand") {
                         player.gotoAndPlay("stand");
+                        // if(speechBubble.currentAnimation == "start") {
+                            // bubbleContainer.visible = true;
+                            // speechBubble.gotoAndPlay("birth");
+                        // }
                     }
+
 
                     // if (player.x > guru[0].x - 200 && player.currentAnimation=="walkRight") {
                         // player.gotoAndPlay("standRight");
@@ -475,228 +573,6 @@ angular.module('DeeDirective',['Constructor'])
 
                 stage.update();
             }
-//
-            // function tick2() {
-                // //handle firing
-                // if(nextBullet <= 0) {
-                    // if(alive && shootHeld){
-                        // nextBullet = BULLET_TIME;
-                        // fireBullet();
-                    // }
-                // } else {
-                    // nextBullet--;
-                // }
-//
-                // //handle turning
-                // if(alive && lfHeld){
-                    // ship.rotation -= TURN_FACTOR;
-                // } else if(alive && rtHeld) {
-                    // ship.rotation += TURN_FACTOR;
-                // }
-//
-                // //handle thrust
-                // if(alive && fwdHeld){
-                    // ship.accelerate();
-                // }
-//
-                // //handle new spaceRocks
-                // if(nextRock <= 0) {
-                    // if(alive){
-                        // timeToRock -= DIFFICULTY;   //reduce spaceRock spacing slowly to increase difficulty with time
-                        // var index = getSpaceRock(SpaceRock.LRG_ROCK);
-                        // rockBelt[index].floatOnScreen(canvas.width, canvas.height);
-                        // nextRock = timeToRock + timeToRock*Math.random();
-                    // }
-                // } else {
-                    // nextRock--;
-                // }
-//
-                // //handle ship looping
-                // if(alive && outOfBounds(ship, ship.bounds)) {
-                    // placeInBounds(ship, ship.bounds);
-                // }
-//
-                // //handle bullet movement and looping
-                // for(bullet in bulletStream) {
-                    // var o = bulletStream[bullet];
-                    // if(!o || !o.active) { continue; }
-                    // if(outOfBounds(o, ship.bounds)) {
-                        // placeInBounds(o, ship.bounds);
-                    // }
-                    // o.x += Math.sin(o.rotation*(Math.PI/-180))*BULLET_SPEED;
-                    // o.y += Math.cos(o.rotation*(Math.PI/-180))*BULLET_SPEED;
-//
-                    // if(--o.entropy <= 0) {
-                        // stage.removeChild(o);
-                        // o.active = false;
-                    // }
-                // }
-//
-                // //handle spaceRocks (nested in one loop to prevent excess loops)
-                // for(spaceRock in rockBelt) {
-                    // var o = rockBelt[spaceRock];
-                    // if(!o || !o.active) { continue; }
-//
-                    // //handle spaceRock movement and looping
-                    // if(outOfBounds(o, o.bounds)) {
-                        // placeInBounds(o, o.bounds);
-                    // }
-                    // o.tick();
-//
-//
-                    // //handle spaceRock ship collisions
-                    // if(alive && o.hitRadius(ship.x, ship.y, ship.hit)) {
-                        // alive = false;
-//
-                        // stage.removeChild(ship);
-                        // messageField.text = "You're dead:  Click or hit enter to play again";
-                        // stage.addChild(messageField);
-                        // watchRestart();
-//
-                        // //play death sound
-                        // createjs.Sound.play("death", createjs.Sound.INTERRUPT_ANY);
-                        // continue;
-                    // }
-//
-                    // //handle spaceRock bullet collisions
-                    // for(bullet in bulletStream) {
-                        // var p = bulletStream[bullet];
-                        // if(!p || !p.active) { continue; }
-//
-                        // if(o.hitPoint(p.x, p.y)) {
-                            // var newSize;
-                            // switch(o.size) {
-                                // case SpaceRock.LRG_ROCK: newSize = SpaceRock.MED_ROCK;
-                                    // break;
-                                // case SpaceRock.MED_ROCK: newSize = SpaceRock.SML_ROCK;
-                                    // break;
-                                // case SpaceRock.SML_ROCK: newSize = 0;
-                                    // break;
-                            // }
-//
-                            // //score
-                            // if(alive) {
-                                // addScore(o.score);
-                            // }
-//
-                            // //create more
-                            // if(newSize > 0) {
-                                // var i;
-                                // var index;
-                                // var offSet;
-//
-                                // for(i=0; i < SUB_ROCK_COUNT; i++){
-                                    // index = getSpaceRock(newSize);
-                                    // offSet = (Math.random() * o.size*2) - o.size;
-                                    // rockBelt[index].x = o.x + offSet;
-                                    // rockBelt[index].y = o.y + offSet;
-                                // }
-                            // }
-//
-                            // //remove
-                            // stage.removeChild(o);
-                            // rockBelt[spaceRock].active = false;
-//
-                            // stage.removeChild(p);
-                            // bulletStream[bullet].active = false;
-//
-                            // // play sound
-                            // createjs.Sound.play("break", {interrupt: createjs.Sound.INTERUPT_LATE, offset:0.8});
-                        // }
-                    // }
-                // }
-//
-                // //call sub ticks
-                // ship.tick();
-                // stage.update();
-            // }
-//
-            // function outOfBounds(o, bounds) {
-                // //is it visibly off screen
-                // return o.x < bounds*-2 || o.y < bounds*-2 || o.x > canvas.width+bounds*2 || o.y > canvas.height+bounds*2;
-            // }
-//
-            // function placeInBounds(o, bounds) {
-                // //if its visual bounds are entirely off screen place it off screen on the other side
-                // if(o.x > canvas.width+bounds*2) {
-                    // o.x = bounds*-2;
-                // } else if(o.x < bounds*-2) {
-                    // o.x = canvas.width+bounds*2;
-                // }
-//
-                // //if its visual bounds are entirely off screen place it off screen on the other side
-                // if(o.y > canvas.height+bounds*2) {
-                    // o.y = bounds*-2;
-                // } else if(o.y < bounds*-2) {
-                    // o.y = canvas.height+bounds*2;
-                // }
-            // }
-//
-            // function fireBullet() {
-                // //create the bullet
-                // var o = bulletStream[getBullet()];
-                // o.x = ship.x;
-                // o.y = ship.y;
-                // o.rotation = ship.rotation;
-                // o.entropy = BULLET_ENTROPY;
-                // o.active = true;
-//
-                // //draw the bullet
-                // o.graphics.beginStroke("#FFFFFF").moveTo(-1, 0).lineTo(1, 0);
-//
-                // // play the shot sound
-                // createjs.Sound.play("laser", createjs.Sound.INTERUPT_LATE);
-            // }
-//
-            // function getSpaceRock(size) {
-                // var i = 0;
-                // var len = rockBelt.length;
-//
-                // //pooling approach
-                // while(i <= len){
-                    // if(!rockBelt[i]) {
-                        // rockBelt[i] = new SpaceRock(size);
-                        // break;
-                    // } else if(!rockBelt[i].active) {
-                        // rockBelt[i].activate(size);
-                        // break;
-                    // } else {
-                        // i++;
-                    // }
-                // }
-//
-                // if(len == 0) {
-                    // rockBelt[0] = new SpaceRock(size);
-                // }
-//
-                // stage.addChild(rockBelt[i]);
-                // return i;
-            // }
-//
-            // function getBullet() {
-                // var i = 0;
-                // var len = bulletStream.length;
-//
-                // //pooling approach
-                // while(i <= len){
-                    // if(!bulletStream[i]) {
-                        // bulletStream[i] = new createjs.Shape();
-                        // break;
-                    // } else if(!bulletStream[i].active) {
-                        // bulletStream[i].active = true;
-                        // break;
-                    // } else {
-                        // i++;
-                    // }
-                // }
-//
-                // if(len == 0) {
-                    // bulletStream[0] = new createjs.Shape();
-                // }
-//
-                // stage.addChild(bulletStream[i]);
-                // return i;
-            // }
 
             //allow for WASD and arrow control scheme
             function handleKeyDown(e) {
@@ -728,10 +604,6 @@ angular.module('DeeDirective',['Constructor'])
                 }
             }
 
-            function addScore(value) {
-                //trust the field will have a number and add the score
-                scoreField.text = (Number(scoreField.text) + Number(value)).toString();
-            }
             elem.ready(function(){
                 init();
             });

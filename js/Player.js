@@ -1,13 +1,13 @@
 Constructor
 .service('Player', [function(){
     return {
-        create: function(image, options) {
+        create: function(options) {
             function Player() {
                 this.initialize();
             }
             var index = {x:options.index <= 3 ? options.index * 96 : (options.index-4) * 96, y: options.index > 3 ? parseInt(options.index / 4) * 127 : 0};
             var data = new createjs.SpriteSheet({
-                images: [image], // 384 x 508 -> 96 x 127
+                images: ["assets/mc___main_characters_sprites_by_ssb_fan4ever-d53kkhx.png"], // 384 x 508 -> 96 x 127
                 // frames: {"regX": 0, "height": 292, "count": 64, "regY": 0, "width": 165},
                 frames: [
                     // x, y, width, height, imageIndex, regX, regY
@@ -107,6 +107,86 @@ Constructor
         }
     };
 }])
+.service('Bubble', [function(){
+    return {
+        create : function() {
+            function Bubble() {
+                this.initialize();
+            }
+            var bubbleAnimation = {
+                "animations": {
+                              "start": [0],
+                              "death": {"frames": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28], next: "start" },
+                              "birth": {"frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], next: "idle"},
+                              "idle": {"frames": [12], xnext: "death", xfrequency: 5}},
+                "images": ["assets/bubble.png"],
+                "frames": [
+                   [0, 0, 214, 172, 0, 0, 0],
+                    [214, 0, 214, 172, 0, 0, 0],
+                    [428, 0, 214, 172, 0, 0, 0],
+                    [642, 0, 214, 172, 0, 0, 0],
+                    [856, 0, 214, 172, 0, 0, 0],
+                    [1070, 0, 214, 172, 0, 0, 0],
+                    [1284, 0, 214, 172, 0, 0, 0],
+                    [1498, 0, 214, 172, 0, 0, 0],
+                    [1712, 0, 214, 172, 0, 0, 0],
+                    [0, 172, 214, 172, 0, 0, 0],
+                    [214, 172, 214, 172, 0, 0, 0],
+                    [428, 172, 214, 172, 0, 0, 0],
+                    [642, 172, 214, 172, 0, 0, 0],
+                    [856, 172, 214, 172, 0, 0, 0],
+                    [1070, 172, 214, 172, 0, 0, 0],
+                    [1284, 172, 214, 172, 0, 0, 0],
+                    [1498, 172, 214, 172, 0, 0, 0],
+                    [1712, 172, 214, 172, 0, 0, 0],
+                    [0, 344, 214, 172, 0, 0, 0],
+                    [214, 344, 214, 172, 0, 0, 0],
+                    [428, 344, 214, 172, 0, 0, 0],
+                    [642, 344, 214, 172, 0, 0, 0],
+                    [856, 344, 214, 172, 0, 0, 0],
+                    [1070, 344, 214, 172, 0, 0, 0],
+                    [1284, 344, 214, 172, 0, 0, 0],
+                    [1498, 344, 214, 172, 0, 0, 0],
+                    [1712, 344, 214, 172, 0, 0, 0],
+                    [0, 516, 214, 172, 0, 0, 0],
+                    [214, 516, 214, 172, 0, 0, 0]
+                ]
+            };
+
+            var ss3 = new createjs.SpriteSheet(bubbleAnimation);
+            Bubble.prototype = new createjs.Sprite(ss3);
+
+            Bubble.prototype.Animation_initialize = Bubble.prototype.initialize;
+
+            Bubble.prototype.initialize = function (){
+                // this.x = hero.x - 125;
+                // this.y = hero.y - 160;
+                this.alpha = 0.8;
+                this.gotoAndPlay("start");
+                this.bubbleText = new createjs.Text("","bold 15px Unkempt","black");
+                this.bubbleText.lineWidth = 100;
+                // console.log(this)
+            };
+
+            Bubble.prototype.tick = function() {
+
+            };
+
+            Bubble.prototype.handleText = function(text) {
+                this.bubbleText.text = text;
+                this.bubbleText.x = this.x + (this.scaleX == 1 ? 70 : -150);
+                this.bubbleText.y = this.y + 30;
+                this.parent.addChild(this.bubbleText);
+            };
+
+            Bubble.prototype.removeText = function() {
+                this.parent.removeChild(this.bubbleText);
+            };
+
+            return new Bubble();
+        }
+    };
+}])
 .service('RedBird', [function(){
     return {
         create: function() {
@@ -175,7 +255,9 @@ Constructor
             return new BlueBird();
         }
     };
-}])
+}]);
+
+/**
 .service('Grant', [function(){
     return {
         create: function(image) {
@@ -434,4 +516,4 @@ Constructor
     };
     return Player;
 
-}]);
+}]); **/

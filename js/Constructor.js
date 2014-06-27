@@ -1,4 +1,5 @@
-var Constructor = angular.module('Constructor', []).factory('LoadingBar', [
+var Constructor = angular.module('Constructor', [])
+.factory('LoadingBar', [
 function() {
 
     var LoadingBar = function(width, height, padding, color, frameColor) {
@@ -48,7 +49,7 @@ function() {
     };
     return LoadingBar;
 }])
-.factory('BitmapButton',[function(){
+.service('BitmapButton',[function(){
     return {
         create : function(image) {
             // spritesheet "bitmap" button:
