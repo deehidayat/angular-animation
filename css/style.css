@@ -1,0 +1,62 @@
+body {
+    background-color: #000;
+}
+html, body, #tbl_wrap, body > div {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+#td_wrap {
+    vertical-align: middle;
+    text-align: center;
+}
+#game-container {
+    position: relative;
+    height: 500px;
+    border: 1px solid white;
+    display: inline-block;
+}
+#game-container #canvas {
+    height: 100%;
+}
+.menu {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+.menu > * {
+    list-style: none;
+    display: inline-block;
+    /*padding: 5px;*/
+    color: #000000;
+    background-color: rgba(255,255,255,1);
+    opacity: 0.5;
+    width: 32px;
+    height: 32px;
+    border-radius:20px;
+    line-height: 32px;
+    text-align: center;
+}
+.menu > *:hover {
+    background-color: #59554D;
+    opacity: 1;
+}
+
+.menu a {
+    color: #000000;
+    display: block;
+}
+
+.top-left {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

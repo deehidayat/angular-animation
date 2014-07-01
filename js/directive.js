@@ -13,10 +13,59 @@ angular.module('DeeDirective',['Constructor'])
         }
     };
 }])
+.controller('GameController',['$scope', '$modal', function($scope, $modal){
+    // console.log('homectrl');
+    $scope.currentState = 'loading';
+    $scope.openSetting = function() {
+        console.log(createjs.Ticker.getPaused());
+        createjs.Ticker.setPaused(true);
+        $modal.open({
+            templateUrl : './pages/setting.html',
+            backdrop : 'static',
+            controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
+                $scope.close = function () {
+                    $modalInstance.dismiss('close');
+                };
+            }],
+        }).result.then(function(){
+            createjs.Ticker.setPaused(false);
+        }, function(){
+            createjs.Ticker.setPaused(false);
+        });
+    };
+    $scope.openHelp = function() {
+        $modal.open({
+            templateUrl : './pages/help.html',
+            backdrop : 'static',
+            controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
+                $scope.close = function () {
+                    $modalInstance.dismiss('close');
+                };
+            }],
+        });
+    };
+    $scope.openAbout = function() {
+        $modal.open({
+            templateUrl : './pages/about.html',
+            backdrop : 'static',
+            controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
+                $scope.close = function () {
+                    $modalInstance.dismiss('close');
+                };
+            }],
+        });
+    };
+}])
 .directive('game', ['$modal', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($modal, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
     return {
+        templateUrl : 'pages/game-tpl.html',
+        replace : true,
+        controller : 'GameController',
+        scope : {
+            config : '=game'
+        },
         link : function(scope, elem) {
-
+// console.log(scope);
             var KEYCODE_ENTER = 13;     //usefull keycode
             var KEYCODE_SPACE = 32;     //usefull keycode
             var KEYCODE_UP = 38;        //usefull keycode
@@ -58,7 +107,6 @@ angular.module('DeeDirective',['Constructor'])
             var distance = 0;
             var sky, fog, fog2, ground, hill, hill2, grant, bird; // BAckground
             var mainContainer;
-            var currentState; // menu | belajar | quiz
             var bubbleContainer, speechBubble, speechText;
             var hypnosis =  ["Belajar Biologi itu menyenangkan", "Belajar Biologi itu mudah", "Belajar Biologi itu tidak susah"];
             var hypnosisText;
@@ -67,9 +115,8 @@ angular.module('DeeDirective',['Constructor'])
             document.onkeydown = handleKeyDown;
             document.onkeyup = handleKeyUp;
 
-            function init() {
+            function init(canvas) {
 
-                canvas = elem[0];
                 stage = new createjs.Stage(canvas);
 
                 width = stage.canvas.width;
@@ -121,11 +168,8 @@ angular.module('DeeDirective',['Constructor'])
                     // id:"music",
                     // src:"18-machinae_supremacy-lord_krutors_dominion.ogg"
                 // },
-                // {
-                    // id:"music2",
-                    // src:"M-GameBG.ogg"
-                // },
                 // {src:"mc___main_characters_sprites_by_ssb_fan4ever-d53kkhx.png", id:"player"},
+                {src:"M-GameBG.ogg", id:"music2"},
                 {src:"layerneg2_fog.png", id:"fog"},
                 {src:"layerneg2_fog2.png", id:"fog2"},
                 {src:"sky.png", id:"sky"},
@@ -257,7 +301,9 @@ angular.module('DeeDirective',['Constructor'])
 
                 menuContainer.addChild(btnBelajar, btnQuiz);
 
-                currentState = 'menu';
+                scope.$apply(function(){
+                    scope.currentState = 'menu';
+                });
                 mainContainer.addChild(menuContainer);
 
 
@@ -338,7 +384,9 @@ angular.module('DeeDirective',['Constructor'])
                         // }
 
 
-                currentState = 'belajar';
+                scope.$apply(function(){
+                    scope.currentState = 'belajar';
+                });
                 mainContainer.addChild(bubbleContainer, guru[0], guru[1], player);
 
                 stage.addEventListener("click", function(e){
@@ -410,7 +458,7 @@ angular.module('DeeDirective',['Constructor'])
                 }
 
                 // start the music
-                // bgMusic = createjs.Sound.play("music2", {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
+                bgMusic = createjs.Sound.play("music2", {xinterrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
             }
 
             function tick(event) {
@@ -434,7 +482,7 @@ angular.module('DeeDirective',['Constructor'])
                 // if (bird.x <  -100) { bird.x = width + 100; bird.y = Math.random() * (height * 0.3); }
 
 
-                if(currentState == "belajar") {
+                if(scope.currentState == "belajar") {
                     player.tick();
 //
                     // if(distance > 0 && player.x < guru[0].x) {
@@ -605,7 +653,7 @@ angular.module('DeeDirective',['Constructor'])
             }
 
             elem.ready(function(){
-                init();
+                init(elem.find('canvas')[0]);
             });
         }
     };
