@@ -3,7 +3,7 @@ function($stateProvider, $urlRouterProvider) {
 
     var home = {
         name:'home',
-        url:'/',
+        url:'/?dev',
         views : {
             '@' : {
                 templateUrl:'./pages/home.html',
@@ -14,7 +14,7 @@ function($stateProvider, $urlRouterProvider) {
     };
 
     // Default page ketika pertama kali load halaman
-    $urlRouterProvider.otherwise(home.url);
+    $urlRouterProvider.otherwise(home.url, {dev:true});
 
     // Daftarkan state ke stateProvider
     $stateProvider.state(home);

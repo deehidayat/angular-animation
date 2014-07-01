@@ -1,24 +1,14 @@
 angular.module('DeeDirective',['Constructor'])
-.directive('treeview', [function(){
-    return {
-        link : function(scope, elem) {
-            angular.element(elem).tree();
-        }
-    };
-}])
-.directive('center', [function(){
-    return {
-        link : function(scope, elem) {
-            angular.element(elem).center();
-        }
-    };
-}])
 .controller('GameController',['$scope', '$modal', function($scope, $modal){
     // console.log('homectrl');
-    $scope.currentState = 'loading';
+    $scope.prevState = null;
+    $scope.currentState = null;
+    $scope.isFullScreen = false;
+    $scope.isMute = false;
+
     $scope.openSetting = function() {
+        createjs.Ticker.setPaused(!createjs.Ticker.getPaused());
         console.log(createjs.Ticker.getPaused());
-        createjs.Ticker.setPaused(true);
         $modal.open({
             templateUrl : './pages/setting.html',
             backdrop : 'static',
@@ -55,8 +45,43 @@ angular.module('DeeDirective',['Constructor'])
             }],
         });
     };
+    $scope.openFullScreen = function(id) {
+        var elem = document.getElementById(id);
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+            $scope.isFullScreen = true;
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+            $scope.isFullScreen = true;
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+            $scope.isFullScreen = true;
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+            $scope.isFullScreen = true;
+        } else if (elem.mozCancelFullScreen) {
+            elem.mozCancelFullScreen();
+            $scope.isFullScreen = false;
+        } else if(elem.webkitCancelFullScreen){
+            elem.webkitCancelFullScreen();
+            $scope.isFullScreen = false;
+        }
+    };
+
+    $scope.toogleMute = function() {
+        createjs.Sound.setMute(!$scope.isMute);
+        $scope.isMute = createjs.Sound.getMute();
+    };
+
+    $scope.setState = function(state) {
+        $scope.$apply(function(){
+            $scope.prevState = $scope.currentState;
+            $scope.currentState = state;
+        });
+    };
+
 }])
-.directive('game', ['$modal', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($modal, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
+.directive('game', ['$stateParams', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($stateParams, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
     return {
         templateUrl : 'pages/game-tpl.html',
         replace : true,
@@ -182,13 +207,16 @@ angular.module('DeeDirective',['Constructor'])
 
                 createjs.Sound.alternateExtensions = ["mp3"];
                 preload = new createjs.LoadQueue(true, assetsPath);
-                preload.installPlugin(createjs.Sound);
+                if(!$stateParams.dev)
+                    preload.installPlugin(createjs.Sound);
                 preload.addEventListener("complete", doneLoading);
                 preload.addEventListener("progress", updateLoading);
                 preload.loadManifest(manifest);
             }
 
             function createSplash() {
+                scope.setState('loading');
+
                 // Coainter untuk loading dan awal
                 splashContainer = new createjs.Container();
                 stage.addChild(splashContainer);
@@ -224,7 +252,7 @@ angular.module('DeeDirective',['Constructor'])
                 clearInterval(loadingInterval);
                 messageField.text = "Click untuk memulai";
                 stage.update();
-                watchRestart();
+                // restart();
 
                 // scoreField = new createjs.Text("0", "bold 12px Arial", "#FFFFFF");
                 // scoreField.textAlign = "right";
@@ -240,14 +268,6 @@ angular.module('DeeDirective',['Constructor'])
                 // }
 
 
-            }
-
-            function watchRestart() {
-                //watch for clicks
-                // stage.addChild(messageField);
-                // stage.update();     //update the stage to show text
-                // splashContainer.onclick = handleClick;
-                // splashContainer.addEventListener("click", handleClick);
             }
 
             function handleClick(event) {
@@ -301,11 +321,9 @@ angular.module('DeeDirective',['Constructor'])
 
                 menuContainer.addChild(btnBelajar, btnQuiz);
 
-                scope.$apply(function(){
-                    scope.currentState = 'menu';
-                });
                 mainContainer.addChild(menuContainer);
 
+                scope.setState('menu');
 
                 // var star = new createjs.Shape();
                 // star.x = width/2;
@@ -384,15 +402,14 @@ angular.module('DeeDirective',['Constructor'])
                         // }
 
 
-                scope.$apply(function(){
-                    scope.currentState = 'belajar';
-                });
                 mainContainer.addChild(bubbleContainer, guru[0], guru[1], player);
 
-                stage.addEventListener("click", function(e){
-                    // console.log(e);
-                   if(e.rawY >= width / 2) player.gotoAndPlay("walkRight");
-                });
+                scope.setState('belajar');
+
+                // stage.addEventListener("click", function(e){
+                    // // console.log(e);
+                   // if(e.rawY >= width / 2) player.gotoAndPlay("walkRight");
+                // });
             }
 
             function showQuiz() {

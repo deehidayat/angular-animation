@@ -20,7 +20,9 @@ html, body, #tbl_wrap, body > div {
 }
 #game-container #canvas {
     height: 100%;
+    width: auto;
 }
+
 .menu {
     display: inline-block;
     padding: 0;
@@ -48,6 +50,9 @@ html, body, #tbl_wrap, body > div {
     color: #000000;
     display: block;
 }
+.menu a:hover {
+    color: #FFFFFF;
+}
 
 .top-left {
     position: absolute;
@@ -59,4 +64,16 @@ html, body, #tbl_wrap, body > div {
     position: absolute;
     top: 10px;
     right: 10px;
+}
+
+.bottom-right {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.log {
+    background-color: #FFFFFF;
+    overflow: auto;
+    height: 100px;
 }
