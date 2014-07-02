@@ -6,11 +6,10 @@ angular.module('DeeDirective',['Constructor'])
     $scope.isFullScreen = false;
     $scope.isMute = false;
 
-    $scope.openSetting = function() {
-        createjs.Ticker.setPaused(!createjs.Ticker.getPaused());
-        console.log(createjs.Ticker.getPaused());
+    $scope.openAbout = function() {
+        createjs.Ticker.setPaused(true);
         $modal.open({
-            templateUrl : './pages/setting.html',
+            templateUrl : './pages/about.html',
             backdrop : 'static',
             controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
                 $scope.close = function () {
@@ -23,28 +22,7 @@ angular.module('DeeDirective',['Constructor'])
             createjs.Ticker.setPaused(false);
         });
     };
-    $scope.openHelp = function() {
-        $modal.open({
-            templateUrl : './pages/help.html',
-            backdrop : 'static',
-            controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
-                $scope.close = function () {
-                    $modalInstance.dismiss('close');
-                };
-            }],
-        });
-    };
-    $scope.openAbout = function() {
-        $modal.open({
-            templateUrl : './pages/about.html',
-            backdrop : 'static',
-            controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
-                $scope.close = function () {
-                    $modalInstance.dismiss('close');
-                };
-            }],
-        });
-    };
+
     $scope.openFullScreen = function(id) {
         var elem = document.getElementById(id);
         if (elem.requestFullscreen) {
@@ -90,6 +68,10 @@ angular.module('DeeDirective',['Constructor'])
             config : '=game'
         },
         link : function(scope, elem) {
+
+            scope.openMenu = function() {
+                showMainMenu();
+            };
 // console.log(scope);
             var KEYCODE_ENTER = 13;     //usefull keycode
             var KEYCODE_SPACE = 32;     //usefull keycode
@@ -128,11 +110,12 @@ angular.module('DeeDirective',['Constructor'])
             };
 
 
-            var player, guru = new Array();
+            var player, guru = new Array(), currentGuru = -1;
             var distance = 0;
             var sky, fog, fog2, ground, hill, hill2, grant, bird; // BAckground
             var mainContainer;
             var bubbleContainer, speechBubble, speechText;
+            var materiContainer, materi;
             var hypnosis =  ["Belajar Biologi itu menyenangkan", "Belajar Biologi itu mudah", "Belajar Biologi itu tidak susah"];
             var hypnosisText;
 
@@ -402,7 +385,17 @@ angular.module('DeeDirective',['Constructor'])
                         // }
 
 
-                mainContainer.addChild(bubbleContainer, guru[0], guru[1], player);
+                var rect = new createjs.Shape();
+                rect.x = width * 0.2 / 2;
+                rect.y = 100;
+                rect.graphics.beginStroke("#FF0").setStrokeStyle(5).beginFill("#59554D").drawRoundRect(0, 0, width * 0.8, 300, 10).closePath();
+                materi = new createjs.Text("----", "12px Serif", "#FFFFFF");
+
+                materiContainer = new createjs.Container();
+                materiContainer.addChild(rect, materi);
+                materiContainer.visible = false;
+
+                mainContainer.addChild(materiContainer, bubbleContainer, guru[0], guru[1], player);
 
                 scope.setState('belajar');
 
@@ -410,6 +403,25 @@ angular.module('DeeDirective',['Constructor'])
                     // // console.log(e);
                    // if(e.rawY >= width / 2) player.gotoAndPlay("walkRight");
                 // });
+            }
+
+            function toggleMateri() {
+                if(scope.currentState == "belajar") {
+                    if (currentGuru==0) {
+                        // player.gotoAndPlay("stand");
+                        // speechBubble.scaleX = -1;
+                        // speechBubble.y = player.y - 10 - 200;
+                        // speechBubble.x = player.x + 32 + 200;
+                        // speechBubble.handleText("Iya tentu saya ingin tahu");
+                        scope.materi = 'Bernapas adalah proses memasukkan serta mengeluarkan udara ke dan dari dalam tubuh. Udara yang dimasukkan itu mengandung oksigen, sedangkan udara yang dikeluarkan mengandung karbon dioksida serta uap air. ';
+                        guru[0].learned = true;
+                        materiContainer.visible = true;
+                        scope.setState('materi');
+                    }
+                } else if (scope.currentState == "materi") {
+                    materiContainer.visible = false;
+                    scope.setState('belajar');
+                }
             }
 
             function showQuiz() {
@@ -469,8 +481,8 @@ angular.module('DeeDirective',['Constructor'])
                 //start game timer
                 if (!createjs.Ticker.hasEventListener("tick")) {
                     createjs.Ticker.timingMode = createjs.Ticker.RAF;
-                    // createjs.Ticker.setFPS(20);
-                    createjs.Ticker.setInterval(50);        // in ms, so 50 fps
+                    createjs.Ticker.setFPS(20);
+                    // createjs.Ticker.setInterval(50);        // in ms
                     createjs.Ticker.addEventListener("tick", tick);
                 }
 
@@ -509,6 +521,7 @@ angular.module('DeeDirective',['Constructor'])
 
                     // Guru 1
                     if(player.x < guru[0].x && player.x >= guru[0].x - 200) {
+                        currentGuru = 0;
                         if(guru[0].currentAnimation != "standLeft")
                             guru[0].gotoAndPlay("standLeft");
 
@@ -526,6 +539,7 @@ angular.module('DeeDirective',['Constructor'])
 
                         // speechBubble.scaleX = speechBubble.scaleY = 1;
                     } else if(player.x > guru[0].x && player.x <= guru[0].x + 200) {
+                        currentGuru = 0;
                         if(guru[0].currentAnimation != "standRight")
                             guru[0].gotoAndPlay("standRight");
 
@@ -644,7 +658,7 @@ angular.module('DeeDirective',['Constructor'])
                 //cross browser issues exist
                 if(!e){ var e = window.event; }
                 switch(e.keyCode) {
-                    case KEYCODE_SPACE: shootHeld = true; return false;
+                    case KEYCODE_SPACE: toggleMateri(); return false;
                     case KEYCODE_A:
                     case KEYCODE_LEFT:  lfHeld = true; return false;
                     case KEYCODE_D:

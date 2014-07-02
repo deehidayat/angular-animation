@@ -1,10 +1,11 @@
 <div id="game-container">
     <canvas id="canvas" width="1024" height="768"></canvas>
+    <div id="materi-area" ng-show="currentState == 'materi'"><div>{{ materi }}</div></div>
     <!-- <div class="log">{{ currentState }}</div> -->
     <ul class="menu top-left" ng-show="currentState != 'loading'">
-        <li><a href="javascript:void(0);" ng-click="openSetting()" title="Pengaturan"> <i class="glyphicon glyphicon-cog"></i> </a></li>
-        <li><a href="javascript:void(0);" ng-click="openHelp()" title="Bantuan"> <i class="glyphicon glyphicon-question-sign"></i> </a></li>
-        <li><a href="javascript:void(0);" ng-click="openAbout()" title="Tentang Aplikasi"> <i class="glyphicon glyphicon-info-sign"></i> </a></li>
+        <!-- <li><a href="javascript:void(0);" ng-click="openSetting()" title="Pengaturan"> <i class="glyphicon glyphicon-cog"></i> </a></li> -->
+        <li><a href="javascript:void(0);" ng-click="openAbout()" title="Tentang"> <i class="glyphicon glyphicon-info-sign"></i> </a></li>
+        <li ng-show="currentState != 'menu'"><a href="javascript:void(0);" ng-click="openMenu()" title="Menu"> <i class="glyphicon glyphicon-tasks"></i> </a></li>
     </ul>
     <ul class="menu top-right" ng-show="currentState != 'loading'">
        <!--  <li><a href="javascript:void(0);" ng-click="openFullScreen('game-container')" title="Fullscreen"> <i class="glyphicon" ng-class="{'glyphicon-resize-full':!isFullscreen, 'glyphicon-resize-smalln':isFullscreen}"></i> </a></li> -->
