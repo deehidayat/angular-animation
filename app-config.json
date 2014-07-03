@@ -1,0 +1,23 @@
+{
+"playerName" : "Ismet",
+"playerIndex" : 0,
+"teacher" : [
+    {
+      "name" : "Guru 1",
+      "index" : 2,
+      "message" : "hay %playerName%, mau tau arti pernapasan?",
+      "materi" : [
+          "Bernapas adalah proses memasukkan serta mengeluarkan udara ke dan dari dalam tubuh. Udara yang dimasukkan itu mengandung oksigen, sedangkan udara yang dikeluarkan mengandung karbon dioksida serta uap air. Oksigen yang masuk digunakan tubuh untuk melakukan proses respirasi, yaitu proses pemecahan zat-zat untuk menghasilkan energi.",
+          "Energi tersebut digunakan makhluk hidup untuk melakukan seluruh aktifitas kehidupannya. Selain menghasilkan energi, respirasi juga menghasilkan karbon dioksida dan uap air yang akan dikeluarkan dari dalam tubuh melalui proses bernapas."
+      ]
+    },
+    {
+      "name" : "Guru 2",
+      "index" : 1,
+      "message" : "hay %playerName%, mau tau alat-alat pernapasan?",
+      "materi" : [
+          "Alat pernapasan"
+      ]
+    }
+]
+}

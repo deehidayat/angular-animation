@@ -1,15 +1,30 @@
 <div id="game-container">
     <canvas id="canvas" width="1024" height="768"></canvas>
-    <div id="materi-area" ng-show="currentState == 'materi'"><div>{{ materi }}</div></div>
+    <div id="materi-area" ng-show="currentState == 'materi'">
+        <div>
+            <button class="close" ng-click="toggleMateri()">&times;</button>
+            <div ng-bind-html="currentMateri"></div>
+            <ul class="menu bottom-right" ng-show="showPrevNext()">
+                <li><a href="javascript:void(0);" ng-click="selectMateri(-1)"><i class="glyphicon glyphicon-chevron-left"></i></a></li>
+                <li><a href="javascript:void(0);" ng-click="selectMateri(1)"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+            </ul>
+        </div>
+    </div>
     <!-- <div class="log">{{ currentState }}</div> -->
     <ul class="menu top-left" ng-show="currentState != 'loading'">
         <!-- <li><a href="javascript:void(0);" ng-click="openSetting()" title="Pengaturan"> <i class="glyphicon glyphicon-cog"></i> </a></li> -->
         <li><a href="javascript:void(0);" ng-click="openAbout()" title="Tentang"> <i class="glyphicon glyphicon-info-sign"></i> </a></li>
-        <li ng-show="currentState != 'menu'"><a href="javascript:void(0);" ng-click="openMenu()" title="Menu"> <i class="glyphicon glyphicon-tasks"></i> </a></li>
+        <li ng-hide="currentState == 'menu' || currentState == 'materi'"><a href="javascript:void(0);" ng-click="openMenu()" title="Menu"> <i class="glyphicon glyphicon-tasks"></i> </a></li>
     </ul>
     <ul class="menu top-right" ng-show="currentState != 'loading'">
        <!--  <li><a href="javascript:void(0);" ng-click="openFullScreen('game-container')" title="Fullscreen"> <i class="glyphicon" ng-class="{'glyphicon-resize-full':!isFullscreen, 'glyphicon-resize-smalln':isFullscreen}"></i> </a></li> -->
         <li><a href="javascript:void(0);" title="Mute" ng-click="toogleMute()"> <i class="glyphicon" ng-class="{'glyphicon-volume-off':isMute, 'glyphicon-volume-up':!isMute}"></i> </a></li>
 
+    </ul>
+    <ul class="menu middle-right" ng-hide="currentState != 'belajar'">
+        <li><a href="javascript:void(0);" title="Maju" ng-mousedown="moveRight()" ng-mouseup="moveStop()"><i class="glyphicon glyphicon-arrow-right"></i></a></li>
+    </ul>
+    <ul class="menu middle-left" ng-hide="currentState != 'belajar'">
+        <li><a href="javascript:void(0);" title="Mundur" ng-mousedown="moveLeft()" ng-mouseup="moveStop()"><i class="glyphicon glyphicon-arrow-left"></i></a></li>
     </ul>
 </div>

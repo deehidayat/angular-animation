@@ -8,8 +8,8 @@ function() {
         width = typeof width !== 'undefined' ? width : 300;
         height = typeof height !== 'undefined' ? height : 20;
         padding = typeof padding !== 'undefined' ? padding : 3;
-        color = typeof color !== 'undefined' ? color : "black";
-        frameColor = typeof frameColor !== 'undefined' ? frameColor : "black";
+        color = typeof color !== 'undefined' ? color : 'black';
+        frameColor = typeof frameColor !== 'undefined' ? frameColor : 'black';
 
         //calling the initialize function we will write
         this.initialize(width, height, padding, color, frameColor);
@@ -52,13 +52,13 @@ function() {
 .service('BitmapButton',[function(){
     return {
         create : function(image) {
-            // spritesheet "bitmap" button:
+            // spritesheet 'bitmap' button:
             var spriteSheet = new createjs.SpriteSheet({
                 images: image,
                 frames: {width:300, height:100},
                 animations: { out: 0, over: 1, down: 2 }
             });
-            var bitmapButton = new createjs.Sprite(spriteSheet, "up");
+            var bitmapButton = new createjs.Sprite(spriteSheet, 'up');
             var bitmapHelper = new createjs.ButtonHelper(bitmapButton);
             return bitmapButton;
         }
@@ -72,8 +72,8 @@ function() {
             }
             var index = {x:options.index <= 3 ? options.index * 96 : (options.index-4) * 96, y: options.index > 3 ? parseInt(options.index / 4) * 127 : 0};
             var data = new createjs.SpriteSheet({
-                images: ["assets/mc___main_characters_sprites_by_ssb_fan4ever-d53kkhx.png"], // 384 x 508 -> 96 x 127
-                // frames: {"regX": 0, "height": 292, "count": 64, "regY": 0, "width": 165},
+                images: ['assets/player.png'], // 384 x 508 -> 96 x 127
+                // frames: {'regX': 0, 'height': 292, 'count': 64, 'regY': 0, 'width': 165},
                 frames: [
                     // x, y, width, height, imageIndex, regX, regY
                     [0,0,96,127,0,96,0],
@@ -111,21 +111,21 @@ function() {
                 // define two animations, run (loops, 1.5x speed) and jump (returns to run):
                 animations: {
                     // start, end, next, speed
-                    run: [0, 25, "run", 1.5],
-                    jump: [26, 63, "run"],
+                    run: [0, 25, 'run', 1.5],
+                    jump: [26, 63, 'run'],
                     front : {
                         frames: [5,6,4],
-                        // next: "walk",
+                        // next: 'walk',
                         // speed: 0.1
                     },
                     walkLeft : {
                         frames: [8,9,7],
-                        // next: "walk",
+                        // next: 'walk',
                         speed: 0.1
                     },
                     walkRight : {
                         frames: [11,12,10],
-                        // next: "walk",
+                        // next: 'walk',
                         speed: 0.1
                     },
                     stand : {
@@ -142,32 +142,44 @@ function() {
             Player.prototype = new createjs.Sprite(data);
 
             Player.prototype.Animation_initialize = Player.prototype.initialize;
-            Player.prototype.initialize = function() {
-                this.velocity = {
-                  x : 0,
-                  y : 0,
-                };
-                this.name = options.name || "Efis";
-                this.gotoAndPlay("stand");
+            Player.prototype.velocity = {
+                x : 0,
+                y : 0
             };
+            Player.prototype.initialize = function() {
+                this.name = options.name || 'Name';
+                this.velocity = {
+                    x : 0,
+                    y : 0
+                };
+                if (options.type == 'teacher') {
+                    this.learned = false;
+                    this.message = this.name;
+                    this.materi = [];
+                };
+                this.gotoAndPlay('stand');
+            };
+
             Player.prototype.tick = function(event) {
-                if (this.currentAnimation === "stand") {
+                if (this.currentAnimation === 'stand') {
                     this.velocity.x = 0;
                 }
-                if (this.currentAnimation === "walkRight" || this.currentAnimation === "walkLeft") {
-                    if (this.currentAnimation === "walkRight") {
+                if (this.currentAnimation === 'walkRight' || this.currentAnimation === 'walkLeft') {
+                    if (this.currentAnimation === 'walkRight') {
                         if (this.velocity.x < 11) {
                             this.velocity.x++;
                         }
                     }
 
-                    if (this.currentAnimation === "walkLeft") {
+                    if (this.currentAnimation === 'walkLeft') {
                         if (this.velocity.x > -10) {
                             this.velocity.x--;
                         }
                     }
                 }
             };
+
+
             return new Player();
         }
     };
@@ -179,13 +191,13 @@ function() {
                 this.initialize();
             }
             var bubbleAnimation = {
-                "animations": {
-                              "start": [0],
-                              "death": {"frames": [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28], next: "start" },
-                              "birth": {"frames": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], next: "idle"},
-                              "idle": {"frames": [12], xnext: "death", xfrequency: 5}},
-                "images": ["assets/bubble.png"],
-                "frames": [
+                'animations': {
+                              'start': [0],
+                              'death': {'frames': [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28], next: 'start' },
+                              'birth': {'frames': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], next: 'idle'},
+                              'idle': {'frames': [12], xnext: 'death', xfrequency: 5}},
+                'images': ['assets/bubble.png'],
+                'frames': [
                    [0, 0, 214, 172, 0, 0, 0],
                     [214, 0, 214, 172, 0, 0, 0],
                     [428, 0, 214, 172, 0, 0, 0],
@@ -227,8 +239,8 @@ function() {
                 // this.x = hero.x - 125;
                 // this.y = hero.y - 160;
                 this.alpha = 0.8;
-                this.gotoAndPlay("start");
-                this.bubbleText = new createjs.Text("","bold 15px Unkempt","black");
+                this.gotoAndPlay('start');
+                this.bubbleText = new createjs.Text('','bold 15px Unkempt','black');
                 this.bubbleText.lineWidth = 100;
                 // console.log(this)
             };
@@ -259,11 +271,11 @@ function() {
                 this.initialize();
             }
             var data = new createjs.SpriteSheet({
-                images: ["assets/redBird.png"], // 918 x 506 -> 96 x 127
-                frames: {"regX": 10, "regY": 0, "height": 506 / 3, "width": 915 / 5, "count": 14},
+                images: ['assets/redBird.png'], // 918 x 506 -> 96 x 127
+                frames: {'regX': 10, 'regY': 0, 'height': 506 / 3, 'width': 915 / 5, 'count': 14},
                 // frames: []
                 animations : {
-                    fly : [0,13,"fly",0.5]
+                    fly : [0,13,'fly',0.5]
                 }
             });
 
@@ -275,7 +287,7 @@ function() {
                   x : 0,
                   y : 0,
                 };
-                this.gotoAndPlay("fly");
+                this.gotoAndPlay('fly');
             };
 
             return new RedBird();
@@ -289,16 +301,16 @@ function() {
                 this.initialize();
             }
             var data = new createjs.SpriteSheet({
-                images: ["assets/blueBird.png"], // 918 x 506 -> 96 x 127
-                frames: {"regX": 0, "regY": 0, "height": 256 / 4, "width": 256 / 4},
+                images: ['assets/blueBird.png'], // 918 x 506 -> 96 x 127
+                frames: {'regX': 0, 'regY': 0, 'height': 256 / 4, 'width': 256 / 4},
                 // frames: []
                 animations : {
-                    flyLeft : [0,3,"flyLeft",0.6],
-                    flyRight : [4,7,"flyRight",0.6],
+                    flyLeft : [0,3,'flyLeft',0.6],
+                    flyRight : [4,7,'flyRight',0.6],
                     stand : [15],
                     standFly : {
                         frames : [15,14,13,12],
-                        next : "standFly",
+                        next : 'standFly',
                         speed : 0.3
                     },
                     standLeft : [9],
@@ -314,7 +326,7 @@ function() {
                   x : 0,
                   y : 0,
                 };
-                this.gotoAndPlay("stand");
+                this.gotoAndPlay('stand');
             };
 
             return new BlueBird();

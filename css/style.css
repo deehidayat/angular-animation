@@ -73,6 +73,26 @@ html, body, #tbl_wrap, body > div {
     right: 10px;
 }
 
+.bottom-left {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+.middle-right {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    margin-top: -16px;
+}
+
+.middle-left {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    margin-top: -16px;
+}
+
 .log {
     background-color: #FFFFFF;
     overflow: auto;
@@ -99,4 +119,17 @@ padding: 10px
     text-align: left;
     color: #FFFFFF;
     font-size: 14px;
+    position: relative;
+}
+
+#materi-area .menu > *:hover {
+    background-color: #C2E1E7;
+    opacity: 1;
+}
+
+#materi-area .close {
+    color: #00FF00;
+    margin-right: 5px;
+    z-index: 100;
+    font-size: 22px;
 }
