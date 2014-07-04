@@ -6,16 +6,11 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
         scope : {
             urlConfig : '@game'
         },
-        link : function(scope, elem) {
-
-            scope.prevState = null;
-            scope.currentState = null;
-            scope.isFullScreen = false;
-            scope.isMute = false;
-            scope.currentMateri = null;
-            scope.currentIndex = 0;
-
-            // console.log(scope);
+        // controller : ['$scope', function($scope){
+            // $scope.rating = 4;
+            // $scope.max = 10;
+        // }],
+        link : function(scope, elem, attrs, ctrl) {
             var KEYCODE_ENTER = 13,
                 KEYCODE_SPACE = 32,
                 KEYCODE_UP = 38,
@@ -24,15 +19,12 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 KEYCODE_W = 87,
                 KEYCODE_A = 65,
                 KEYCODE_D = 68;
-
-            var preload, manifest;           // used to register sounds for preloading
-
-            var lfHeld = false, rtHeld = false;             //is the user holding a turn right command
-
+            var preload, manifest;
+            var lfHeld = false, rtHeld = false;
             var stage, width, height, bgMusic;  // Canvas w - h
-            var loadingInterval = 0;
 
             // Halaman Loading
+            var loadingInterval = 0;
             var splashContainer, messageField;
             var progressBar = {
               instance : null,
@@ -46,14 +38,32 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
             // Background Utama
             var mainContainer, sky, fog, fog2, ground, hill, hill2, bird;
             var config; // Untuk menampung konfigurasi file
+            scope.prevState = null;
+            scope.currentState = null;
+            scope.isFullScreen = false;
+            scope.isMute = false;
 
             // Halaman Belajar
             var player, teacher = new Array(), currentTeacher = -1, countTeacher;
             var distance = 0;
             var bubbleContainer, speechBubble, speechText;
-            var materiContainer;
-            var hypnosis =  ['Belajar Biologi itu menyenangkan', 'Belajar Biologi itu mudah', 'Belajar Biologi itu tidak susah'];
-            var hypnosisText;
+            var idxMateri = 0;
+            scope.currentMateri = null;
+            // var hypnosis =  ['Belajar Biologi itu menyenangkan', 'Belajar Biologi itu mudah', 'Belajar Biologi itu tidak susah'];
+            // var hypnosisText;
+
+            // Halaman Quiz
+            var idxQuiz = 0;
+            scope.currentQuiz = {
+                trueAnswer : 0,
+                falseAnswer : 0,
+                startTime : null,
+                finishTime : null,
+                rating : 0,
+                maxRating : 10
+            };
+            scope.currentQest = null;
+            scope.quizState = 'quest';
 
             function init(canvas) {
 
@@ -93,6 +103,39 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 preload.loadManifest(manifest);
             }
 
+            //allow for WASD and arrow control scheme
+            function handleKeyDown(e) {
+                //cross browser issues exist
+                if(!e){ var e = window.event; }
+                switch(e.keyCode) {
+                    case KEYCODE_SPACE: toggleMateri(true); return false;
+                    case KEYCODE_A:
+                    case KEYCODE_LEFT:  lfHeld = true; return false;
+                    case KEYCODE_D:
+                    case KEYCODE_RIGHT: rtHeld = true; return false;
+                    case KEYCODE_W:
+                    case KEYCODE_UP:    fwdHeld = true; return false;
+                    case KEYCODE_ENTER:  if(canvas.onclick == handleClick){ handleClick(); }return false;
+                }
+            }
+
+            function handleKeyUp(e) {
+                //cross browser issues exist
+                if(!e){ var e = window.event; }
+                switch(e.keyCode) {
+                    case KEYCODE_SPACE: shootHeld = false; break;
+                    case KEYCODE_A:
+                    case KEYCODE_LEFT:  lfHeld = false; break;
+                    case KEYCODE_D:
+                    case KEYCODE_RIGHT: rtHeld = false; break;
+                    case KEYCODE_W:
+                    case KEYCODE_UP:    fwdHeld = false; break;
+                }
+            }
+
+            /**
+             * Halaman Loading
+             */
             function createSplash() {
                 // Coainter untuk loading dan awal
                 splashContainer = new createjs.Container();
@@ -116,7 +159,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 progressBar.instance.y = height / 2 - (progressBar.height/2);
 
                 splashContainer.addChild(square, messageField, progressBar.instance);
-                scope.setState('loading');
+                setState('loading');
             }
 
             function updateLoading(event) {
@@ -194,58 +237,83 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     createjs.Ticker.addEventListener('tick', tick);
                 }
 
-                showMainMenu();
+                scope.showMenu(true);
                 // start the music
                 bgMusic = createjs.Sound.play('music2', {xinterrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
             }
 
-            function showMainMenu() {
+            scope.openAbout = function() {
+                createjs.Ticker.setPaused(true);
+                $modal.open({
+                    templateUrl : './pages/about.html',
+                    backdrop : 'static',
+                    controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
+                        $scope.close = function () {
+                            $modalInstance.dismiss('close');
+                        };
+                    }],
+                }).result.then(function(){
+                    createjs.Ticker.setPaused(false);
+                }, function(){
+                    createjs.Ticker.setPaused(false);
+                });
+            };
+            scope.openFullScreen = function(id) {
+                var elem = document.getElementById(id);
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                    $scope.isFullScreen = true;
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                    $scope.isFullScreen = true;
+                } else if (elem.mozRequestFullScreen) {
+                    elem.mozRequestFullScreen();
+                    $scope.isFullScreen = true;
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                    $scope.isFullScreen = true;
+                } else if (elem.mozCancelFullScreen) {
+                    elem.mozCancelFullScreen();
+                    $scope.isFullScreen = false;
+                } else if(elem.webkitCancelFullScreen){
+                    elem.webkitCancelFullScreen();
+                    $scope.isFullScreen = false;
+                }
+            };
+
+            scope.toogleMute = function() {
+                createjs.Sound.setMute(!scope.isMute);
+                scope.isMute = createjs.Sound.getMute();
+            };
+
+            function setState(state, apply) {
+                if (state=='quiz') {
+                   scope.quizState = 'quest';
+                }
+                if (!apply) {
+                    scope.prevState = scope.currentState;
+                    scope.currentState = state;
+                } else {
+                    scope.$apply(function(){
+                        scope.prevState = scope.currentState;
+                        scope.currentState = state;
+                    });
+                }
+            };
+
+            /**
+             * Halaman Menu
+             */
+            scope.showMenu = function(apply) {
                 mainContainer.removeAllChildren();
+                setState('menu', apply);
+            };
 
-                var judul = new createjs.Text('Pengenalan Sistem Pernapasan', 'bold italic 60px Serif', '#59554D');
-                judul.maxWidth = 1000;
-                judul.textAlign = 'center';
-                judul.x = width / 2;
-                judul.y = height / 2 - 250;
-                mainContainer.addChild(judul);
 
-                judul = new createjs.Text('Biologi Kelas XI', 'bold italic 30px Serif', '#c9baba');
-                judul.maxWidth = 1000;
-                judul.textAlign = 'right';
-                judul.x = width - 150;
-                judul.y = height / 2 - 175;
-                mainContainer.addChild(judul);
-
-                var menuContainer  = new createjs.Container();
-                menuContainer.x = width / 2;
-                menuContainer.y = height / 2 ;
-
-                var btnBelajar = BitmapButton.create([preload.getResult('buttonBelajar')]);
-                btnBelajar.scaleX = 0.5;
-                btnBelajar.scaleY = 0.5;
-                btnBelajar.x = -200;
-                btnBelajar.y = 0;
-                btnBelajar.addEventListener('click', function() {
-                    showBelajar();
-                });
-
-                var btnQuiz = BitmapButton.create([preload.getResult('buttonQuiz')]);
-                btnQuiz.scaleX = 0.5;
-                btnQuiz.scaleY = 0.5;
-                btnQuiz.x = 100;
-                btnQuiz.y = 0;
-                btnQuiz.addEventListener('click', function() {
-                    showQuiz();
-                });
-
-                menuContainer.addChild(btnBelajar, btnQuiz);
-
-                mainContainer.addChild(menuContainer);
-
-                scope.setState('menu');
-            }
-
-            function showBelajar() {
+            /**
+             * Halaman Belajar
+             */
+            scope.showBelajar = function() {
                 mainContainer.removeAllChildren();
 
                 /**
@@ -267,6 +335,10 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     bubbleContainer = new createjs.Container();
                     speechBubble = Bubble.create();
                     speechBubble.scaleX = speechBubble.scaleY = 1;
+                    speechBubble.addEventListener('animationend', function(e){
+                        if(e.name=='death')
+                            bubbleContainer.visible = false;
+                    });
                 }
                 bubbleContainer.visible = false;
                 speechBubble.y = player.y - 10 - 200;
@@ -277,17 +349,17 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 /**
                  * Untuk menampilkan materi dari teacher
                  */
-                var rect = new createjs.Shape();
-                rect.x = width * 0.2 / 2;
-                rect.y = 100;
-                rect.graphics.beginStroke('#FF0').setStrokeStyle(5).beginFill('#59554D').drawRoundRect(0, 0, width * 0.8, 300, 10).closePath();
-
-                if (!materiContainer) {
-                    materiContainer = new createjs.Container();
-                }
-                materiContainer.addChild(rect);
-                materiContainer.visible = false;
-                mainContainer.addChild(materiContainer);
+                // var rect = new createjs.Shape();
+                // rect.x = width * 0.1 / 2;
+                // rect.y = 70;
+                // rect.graphics.beginStroke('#FF0').setStrokeStyle(5).beginFill('#59554D').drawRoundRect(0, 0, width * 0.9, 400, 10).closePath();
+//
+                // if (!materiContainer) {
+                    // materiContainer = new createjs.Container();
+                // }
+                // materiContainer.addChild(rect);
+                // materiContainer.visible = false;
+                // mainContainer.addChild(materiContainer);
 
 
                 // hypnosisText = new createjs.Text('--', 'bold 30px Unkempt', '#59554D');
@@ -298,6 +370,9 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 // hypnosisText.visible = false;
                 // mainContainer.addChild(hypnosisText);
 
+                /**
+                 * Membuat Guru
+                 */
                 countTeacher = 0;
                 for (var i=0, l=config.teacher.length; i<l; i++) {
                     var g = config.teacher[i];
@@ -324,46 +399,54 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 // teacher[1].scaleX = teacher[1].scaleY = 1;
 
 
-                scope.setState('belajar', true);
-            }
+                setState('belajar');
+            };
+
+            scope.showPrevNext = function() {
+                return teacher && currentTeacher>-1 ? teacher[currentTeacher].materi.length > 1 : false;
+            };
 
             scope.selectMateri = function (index) {
                 if(!index)
-                    scope.currentIndex = 0;
+                    idxMateri = 0;
                 else
-                    scope.currentIndex += index;
-                if(scope.currentIndex >= teacher[currentTeacher].materi.length)
-                    scope.currentIndex = 0;
-                else if(scope.currentIndex<0)
-                    scope.currentIndex = teacher[currentTeacher].materi.length -1;
-                scope.currentMateri = teacher[currentTeacher].materi[scope.currentIndex];
+                    idxMateri += index;
+                if(idxMateri >= teacher[currentTeacher].materi.length)
+                    idxMateri = 0;
+                else if(idxMateri<0)
+                    idxMateri = teacher[currentTeacher].materi.length -1;
+                scope.currentMateri = teacher[currentTeacher].materi[idxMateri];
+                teacher[currentTeacher].learned = true;
             };
 
             scope.toggleMateri = toggleMateri = function (apply) {
                 if(scope.currentState == 'belajar') {
-                    speechBubble.gotoAndPlay('death');
-                    speechBubble.removeText();
-                    bubbleContainer.visible = false;
-
+                    removeSpeech();
                     scope.selectMateri();
-                    teacher[currentTeacher].learned = true;
-                    materiContainer.visible = true;
-                    scope.setState('materi', apply);
+                    // materiContainer.visible = true;
+                    setState('materi', apply);
                 } else if (scope.currentState == 'materi') {
-                    materiContainer.visible = false;
-                    scope.setState('belajar', apply);
+                    // materiContainer.visible = false;
+                    setState('belajar', apply);
                 }
             };
 
-            function showQuiz() {
-
-                // var star = new createjs.Shape();
-                // star.x = width/2;
-                // star.y = height/2 + 200;
-                // star.graphics.beginFill('#FF0').beginStroke('#FF0').setStrokeStyle(5).drawPolyStar(0, 0, 75, 5, 0.6, -90).closePath();
-                mainContainer.removeAllChildren();
-                scope.setState('quiz', true);
+            function removeSpeech() {
+                speechBubble.removeText();
+                speechBubble.gotoAndPlay('death');
             };
+
+            function showSpeech(scaleX) {
+                speechBubble.scaleX = scaleX;
+                speechBubble.y = teacher[currentTeacher].y - 10 - 200;
+                speechBubble.x = teacher[currentTeacher].x + 32 - 200 * scaleX;
+                speechBubble.handleText(teacher[currentTeacher].message);
+
+                if(speechBubble.currentAnimation == 'start' && !teacher[currentTeacher].learned) {
+                    bubbleContainer.visible = true;
+                    speechBubble.gotoAndPlay('birth');
+                }
+            }
 
             function moveAllTeacher(value) {
                 for (var i=0; i<countTeacher; i++) {
@@ -378,47 +461,112 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                         if(teacher[currentTeacher].currentAnimation != 'standLeft')
                             teacher[currentTeacher].gotoAndPlay('standLeft');
 
-                        speechBubble.scaleX = 1;
-                        speechBubble.y = teacher[currentTeacher].y - 10 - 200;
-                        speechBubble.x = teacher[currentTeacher].x + 32 - 200;
-                        speechBubble.handleText(teacher[currentTeacher].message);
-
-                        if(speechBubble.currentAnimation == 'start' && !teacher[currentTeacher].learned) {
-                            bubbleContainer.visible = true;
-                            speechBubble.gotoAndPlay('birth');
-                        }
-
+                        showSpeech(1);
                         break;
                     } else if(player.x > teacher[i].x && player.x <= teacher[i].x + 200) {
                         currentTeacher = i;
                         if(teacher[currentTeacher].currentAnimation != 'standRight')
                             teacher[currentTeacher].gotoAndPlay('standRight');
 
-                        speechBubble.scaleX = -1;
-                        speechBubble.x = teacher[currentTeacher].x + 32 + 200;
-                        speechBubble.y = teacher[currentTeacher].y - 10 - 200;
-                        speechBubble.handleText(teacher[currentTeacher].message);
-
-                        if(speechBubble.currentAnimation == 'start' && !teacher[currentTeacher].learned) {
-                            bubbleContainer.visible = true;
-                            speechBubble.gotoAndPlay('birth');
-                        }
-
+                        showSpeech(-1);
                         break;
                     } else {
                         if(teacher[i].currentAnimation != 'stand') {
                             teacher[i].gotoAndPlay('stand');
-                            currentTeacher = 0;
+                            currentTeacher = -1;
                         }
 
-                        if(speechBubble.currentAnimation == 'idle' && currentTeacher == 0) {
-                            speechBubble.gotoAndPlay('death');
-                            speechBubble.removeText();
-                            bubbleContainer.visible = false;
+                        if(speechBubble.currentAnimation == 'idle' && currentTeacher == -1) {
+                            removeSpeech();
                         }
                     }
                 }
             }
+
+            scope.moveRight = function() {
+                rtHeld = true;
+            };
+
+            scope.moveLeft = function() {
+                lfHeld = true;
+            };
+
+            scope.moveStop = function() {
+                rtHeld = lfHeld = false;
+            };
+
+            /**
+             * Halaman Quiz
+             */
+            scope.showQuiz = function() {
+                mainContainer.removeAllChildren();
+
+                scope.currentQuiz['trueAnswer'] = 0;
+                scope.currentQuiz['falseAnswer'] = 0;
+                scope.currentQuiz['rating'] = 0;
+                scope.currentQuiz['startTime'] = new Date().getMilliseconds();
+                scope.currentQuiz['finishTime'] = new Date().getMilliseconds();
+
+                selectQuiz();
+                setState('quiz');
+            };
+
+            /**
+             * Randomize array element order in-place.
+             * Using Fisher-Yates shuffle algorithm.
+             */
+            function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+                return array;
+            }
+
+            function selectQuiz(index) {
+                if(!index)
+                    idxQuiz = 0;
+                else
+                    idxQuiz += index;
+                if(idxQuiz >= config.quiz.length) {
+                    idxQuiz = 0;
+                    return calculateRating();
+                }
+                scope.currentQest = config.quiz[idxQuiz];
+                // scope.currentQest.chooises = shuffleArray(scope.currentQest.chooises);
+            };
+
+            scope.answerQuiz = function(id) {
+                if(scope.currentQest.answer == id) {
+                    $modal.open({
+                        template : '<div class="modal-body bg-primary"><i class="glyphicon glyphicon-ok"></i> Ok</div>',
+                        backdrop : 'static',
+                        controller : ['$timeout', '$modalInstance', function($timeout, $modalInstance){
+                            $timeout(function(){
+                                $modalInstance.close(true);
+                            }, 1000);
+                        }],
+                    }).result.then(function(result){
+                        if(result) {
+                            scope.currentQuiz.trueAnswer++;
+                            selectQuiz(1);
+                            console.log(scope.currentQuiz);
+                        }
+                    });
+                } else {
+                    scope.currentQuiz.falseAnswer++;
+                    selectQuiz(1);
+                    console.log(scope.currentQuiz);
+                }
+            };
+
+            function calculateRating() {
+                scope.currentQuiz.rating = Math.ceil(scope.currentQuiz.trueAnswer / config.quiz.length * scope.currentQuiz.maxRating);
+                return scope.quizState = 'result';
+            }
+
 
             function tick(event) {
                 var deltaS = event.delta/1000;
@@ -439,7 +587,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     player.tick();
 
                     /**
-                     * Maju
+                     * Maju - Mundur
                      */
                     if(rtHeld) {
                         if(player && player.currentAnimation == 'stand')
@@ -507,121 +655,10 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     // }
 //
 
-                }
+                };
 
                 stage.update();
             }
-
-            //allow for WASD and arrow control scheme
-            function handleKeyDown(e) {
-                //cross browser issues exist
-                if(!e){ var e = window.event; }
-                switch(e.keyCode) {
-                    case KEYCODE_SPACE: toggleMateri(true); return false;
-                    case KEYCODE_A:
-                    case KEYCODE_LEFT:  lfHeld = true; return false;
-                    case KEYCODE_D:
-                    case KEYCODE_RIGHT: rtHeld = true; return false;
-                    case KEYCODE_W:
-                    case KEYCODE_UP:    fwdHeld = true; return false;
-                    case KEYCODE_ENTER:  if(canvas.onclick == handleClick){ handleClick(); }return false;
-                }
-            }
-
-            function handleKeyUp(e) {
-                //cross browser issues exist
-                if(!e){ var e = window.event; }
-                switch(e.keyCode) {
-                    case KEYCODE_SPACE: shootHeld = false; break;
-                    case KEYCODE_A:
-                    case KEYCODE_LEFT:  lfHeld = false; break;
-                    case KEYCODE_D:
-                    case KEYCODE_RIGHT: rtHeld = false; break;
-                    case KEYCODE_W:
-                    case KEYCODE_UP:    fwdHeld = false; break;
-                }
-            }
-
-            /**
-             * Angular Code
-             */
-
-            scope.openAbout = function() {
-                createjs.Ticker.setPaused(true);
-                $modal.open({
-                    templateUrl : './pages/about.html',
-                    backdrop : 'static',
-                    controller : ['$scope', '$modalInstance', function($scope, $modalInstance){
-                        $scope.close = function () {
-                            $modalInstance.dismiss('close');
-                        };
-                    }],
-                }).result.then(function(){
-                    createjs.Ticker.setPaused(false);
-                }, function(){
-                    createjs.Ticker.setPaused(false);
-                });
-            };
-
-            scope.showPrevNext = function() {
-                return teacher && currentTeacher>-1 ? teacher[currentTeacher].materi.length > 1 : false;
-            };
-
-            scope.openFullScreen = function(id) {
-                var elem = document.getElementById(id);
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                    $scope.isFullScreen = true;
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                    $scope.isFullScreen = true;
-                } else if (elem.mozRequestFullScreen) {
-                    elem.mozRequestFullScreen();
-                    $scope.isFullScreen = true;
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                    $scope.isFullScreen = true;
-                } else if (elem.mozCancelFullScreen) {
-                    elem.mozCancelFullScreen();
-                    $scope.isFullScreen = false;
-                } else if(elem.webkitCancelFullScreen){
-                    elem.webkitCancelFullScreen();
-                    $scope.isFullScreen = false;
-                }
-            };
-
-            scope.toogleMute = function() {
-                createjs.Sound.setMute(!scope.isMute);
-                scope.isMute = createjs.Sound.getMute();
-            };
-
-            scope.setState = function(state, apply) {
-                if (!apply) {
-                    scope.prevState = scope.currentState;
-                    scope.currentState = state;
-                } else {
-                    scope.$apply(function(){
-                        scope.prevState = scope.currentState;
-                        scope.currentState = state;
-                    });
-                }
-            };
-
-            scope.openMenu = function() {
-                showMainMenu();
-            };
-
-            scope.moveRight = function() {
-                rtHeld = true;
-            };
-
-            scope.moveLeft = function() {
-                lfHeld = true;
-            };
-
-            scope.moveStop = function() {
-                rtHeld = lfHeld = false;
-            };
 
             elem.ready(function(){
                 $http.get(scope.urlConfig).success(function(data){

@@ -1,23 +1,314 @@
 {
-"playerName" : "Ismet",
-"playerIndex" : 0,
-"teacher" : [
+  "playerName": "Ismet",
+  "playerIndex": 0,
+  "teacher": [
     {
-      "name" : "Guru 1",
-      "index" : 2,
-      "message" : "hay %playerName%, mau tau arti pernapasan?",
-      "materi" : [
-          "Bernapas adalah proses memasukkan serta mengeluarkan udara ke dan dari dalam tubuh. Udara yang dimasukkan itu mengandung oksigen, sedangkan udara yang dikeluarkan mengandung karbon dioksida serta uap air. Oksigen yang masuk digunakan tubuh untuk melakukan proses respirasi, yaitu proses pemecahan zat-zat untuk menghasilkan energi.",
-          "Energi tersebut digunakan makhluk hidup untuk melakukan seluruh aktifitas kehidupannya. Selain menghasilkan energi, respirasi juga menghasilkan karbon dioksida dan uap air yang akan dikeluarkan dari dalam tubuh melalui proses bernapas."
+      "name": "Guru 1",
+      "index": 2,
+      "message": "hay %playerName%, mau tau arti pernapasan?",
+      "materi": ["Bernapas adalah proses memasukkan serta mengeluarkan udara ke dan dari dalam tubuh. Udara yang dimasukkan itu mengandung <strong>oksigen</strong>, sedangkan udara yang dikeluarkan mengandung <strong>karbon dioksida</strong> serta <strong>uap air</strong>. Oksigen yang masuk digunakan tubuh untuk melakukan proses <strong>respirasi</strong>, yaitu proses pemecahan zat-zat untuk menghasilkan energi.", "Energi digunakan makhluk hidup untuk melakukan seluruh aktifitas kehidupannya. Selain menghasilkan energi, respirasi juga menghasilkan karbon dioksida dan uap air yang akan dikeluarkan dari dalam tubuh melalui proses bernapas."]
+    }, {
+      "name": "Guru 2",
+      "index": 1,
+      "message": "hay %playerName%, mau tau alat-alat pernapasan?",
+      "materi": ["<img class=\"pull-left\" src=\"./img/alat-pernapasan.jpg\"/>Sistem pernapasan tersusun atas saluran udara, bermula dari hidung faring, laring, trakea, bronkus, bronkiolus, dan berakhir pada jutaan kantong udara kecil yang membentuk paru-paru.", "Bernapas dimulai dari <strong>hidung</strong>, kemudian udara disaring dan dihangatkan oleh rambut hidung. Rambut-rambut hidung juga bertindak sebagai saringan. Rambut hidung tersebut menyaring partikel-partikel debu dan kotoran yang terbawa bersama  udara pernapasan. Bernapas juga dapat dilakukan melalui <strong>mulut</strong>, tetapi di dalam mulut udara tidak disaring.", "Dari hidung atau mulut, udara mengalir menuju paru-paru melalui faring, laring, dan tenggorokan (trakea). <ul><li>Faring merupakan saluran udara bersama makanan. Di ujung faring, terdapat katup epiglotis yang berfungsi untuk membuka dan menutupnya saluran menuju batang tenggorokan.</li><li>Laring merupakan bagian pangkal tenggorokan yang didalamnya terdapat kotak/pita suara. Udara yang telah melewati laring ini diteruskan ke batang tenggorokan.</li><li>Batang tenggorokan diperkuat oleh cincin-cincin tulang rawan yang mencegah batang tenggorok menekuk kedalam.</li><li>Dari tenggorok, udara akan masuk ke paru-paru melalui cabang batang tenggorok (bronkus). Didalam paru-paru bronkus bercabang-cabang lagi membentuk bronkiolus.</li></ul>", "Karbon dioksida dari darah dalam kapiler berdifusi ke dalam alveolus. Bersamaan dengan itu, oksigen berdifusi dari kapiler ke alveolus. Perpindahan oksigen dan karbon dioksida itu dinamakan pertukaran gas. Oksigen masuk ke dalam aliran darah dan karbon dioksida keluar dari aliran darah."]
+    }
+  ],
+  "quiz": [
+    {
+      "quest": "Alat pernapasan manusia terdiri atas ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "hidung, fairing, laring, trakea, dan paru-paru"
+        }, {
+          "id": 1,
+          "text": "hidung, fairing, trakea, dan paru-paru"
+        }, {
+          "id": 2,
+          "text": "hidung, fairing, laring, dan paru-paru"
+        }, {
+          "id": 3,
+          "text": "hidung, trakea, laring, dan paru-paru"
+        }, {
+          "id": 4,
+          "text": "hidung, laring, dan paru-paru"
+        }
       ]
-    },
-    {
-      "name" : "Guru 2",
-      "index" : 1,
-      "message" : "hay %playerName%, mau tau alat-alat pernapasan?",
-      "materi" : [
-          "Alat pernapasan"
+    }, {
+      "quest": "Organ sistem pernapasan yang berfungsi untuk melindungi agar makanan yang Anda makan tidak masuk ke saluran pernapasan, yaitu ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "epiglotis"
+        }, {
+          "id": 1,
+          "text": "esofagus"
+        }, {
+          "id": 2,
+          "text": "fairing"
+        }, {
+          "id": 3,
+          "text": "laring"
+        }, {
+          "id": 4,
+          "text": "trakea"
+        }
+      ]
+    }, {
+      "quest": "Fase pernapasan yang dimulai dengan kontraksi otot-otot antar tulang rusuk sehingga tulang rusuk terangkat dan rongga dada membesar disebut ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "ekspirasi"
+        }, {
+          "id": 1,
+          "text": "inspirasi"
+        }, {
+          "id": 2,
+          "text": "difusi"
+        }, {
+          "id": 3,
+          "text": "istirahat"
+        }, {
+          "id": 4,
+          "text": "relaksasi"
+        }
+      ]
+    }, {
+      "quest": "Pada pernapasan dada, udara akan terisap masuk paru-paru jika ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "alveoli dalam paru-paru mengembang"
+        }, {
+          "id": 1,
+          "text": "otot sekat rongga perut mengerut"
+        }, {
+          "id": 2,
+          "text": "otot sekat rongga dada memanjang"
+        }, {
+          "id": 3,
+          "text": "otot-otot diantara tulang rusuk memendek"
+        }, {
+          "id": 4,
+          "text": "otot-otot diantara tulang rusuk memanjang"
+        }
+      ]
+    }, {
+      "quest": "Dalam keadaan istirahat, udara yang dimasukkan kedalam paru-paru (<strong>alveolus</strong>) melalui <strong>inspirasi</strong> sebanyak ... cm<sup>3</sup>",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "4.500"
+        }, {
+          "id": 1,
+          "text": "3.500"
+        }, {
+          "id": 2,
+          "text": "1.500"
+        }, {
+          "id": 3,
+          "text": "1.000"
+        }, {
+          "id": 4,
+          "text": "500"
+        }
+      ]
+    }, {
+      "quest": "Pada fase inspirasi/ekspirasi volume udara yang dimasukkan atau dikeluarkan sebanyak ... cm<sup>3</sup>",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "4.500"
+        }, {
+          "id": 1,
+          "text": "3.500"
+        }, {
+          "id": 2,
+          "text": "1.500"
+        }, {
+          "id": 3,
+          "text": "1.000"
+        }, {
+          "id": 4,
+          "text": "500"
+        }
+      ]
+    }, {
+      "quest": "Pertukaran udara pernapasan di dalam <strong>alveolus</strong> terjadi secara ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "difusi"
+        }, {
+          "id": 1,
+          "text": "osmosis"
+        }, {
+          "id": 2,
+          "text": "ambisis"
+        }, {
+          "id": 3,
+          "text": "transpor aktif"
+        }, {
+          "id": 4,
+          "text": "transpor pasif"
+        }
+      ]
+    }, {
+      "quest": "Kapasitas vital paru-paru normal sebesar ...  cc",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "4.500"
+        }, {
+          "id": 1,
+          "text": "3.500"
+        }, {
+          "id": 2,
+          "text": "1.500"
+        }, {
+          "id": 3,
+          "text": "1.000"
+        }, {
+          "id": 4,
+          "text": "500"
+        }
+      ]
+    }, {
+      "quest": "Pernapasan pada manusia ada dua, yaitu pernapasan dada dan pernapasan perut. Dalam pernapasan  dada otot yang berperan, yaitu ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "otot antartulang rusuk dalam"
+        }, {
+          "id": 1,
+          "text": "otot antartulang rusuk luar"
+        }, {
+          "id": 2,
+          "text": "otot diafragma"
+        }, {
+          "id": 3,
+          "text": "otot antartulang rusuk dalam dan luar"
+        }, {
+          "id": 4,
+          "text": "otot dinding perut"
+        }
+      ]
+    }, {
+      "quest": "Frekuensi pernapasan manusia dipengaruhi oleh ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "jenis kelamin dan suhu tubuh"
+        }, {
+          "id": 1,
+          "text": "makanan dan umur"
+        }, {
+          "id": 2,
+          "text": "berat badan dan posisi tubuh"
+        }, {
+          "id": 3,
+          "text": "aktivitas tubuh dan makanan"
+        }, {
+          "id": 4,
+          "text": "berat badan dan makanan"
+        }
+      ]
+    }, {
+      "quest": "Pada burung yang berfungsi membantu memperkeras suara, yaitu ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "trakea"
+        }, {
+          "id": 1,
+          "text": "bronkus"
+        }, {
+          "id": 2,
+          "text": "faring"
+        }, {
+          "id": 3,
+          "text": "lubang hidung"
+        }, {
+          "id": 4,
+          "text": "kantong udara"
+        }
+      ]
+    }, {
+      "quest": "Kantong udara yang terletak diantara tulang leher disebut sebagai ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>saccuss interclavicaluris</em>"
+        }, {
+          "id": 1,
+          "text": "<em>saccuss cervicalis</em>"
+        }, {
+          "id": 2,
+          "text": "<em>saccuss axillaris</em>"
+        }, {
+          "id": 3,
+          "text": "<em>saccuss abdominalis</em>"
+        }, {
+          "id": 4,
+          "text": "<em>saccuss thoracalis anterior</em>"
+        }
+      ]
+    }, {
+      "quest": "Alat suara pada burung berkicau disebut sebagai ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>bifurcatio</em>"
+        }, {
+          "id": 1,
+          "text": "<em>syrinx</em>"
+        }, {
+          "id": 2,
+          "text": "trakea"
+        }, {
+          "id": 3,
+          "text": "faring"
+        }, {
+          "id": 4,
+          "text": "laring"
+        }
+      ]
+    }, {
+      "quest": "Kantong udara (<em>saccuss pneumaticus</em>) pada burung yang berjumlah satu adalah ...",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>saccuss abdomiralis</em>"
+        }, {
+          "id": 1,
+          "text": "<em>saccuss cervicalis</em>"
+        }, {
+          "id": 2,
+          "text": "<em>saccuss thoracalis anterior</em>"
+        }, {
+          "id": 3,
+          "text": "<em>saccuss interclavicularis</em>"
+        }, {
+          "id": 4,
+          "text": "<em>saccuss thoracalis posterior</em>"
+        }
       ]
     }
-]
+  ]
 }
