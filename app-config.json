@@ -6,12 +6,12 @@
       "name": "Guru 1",
       "index": 2,
       "message": "hay %playerName%, mau tau arti pernapasan?",
-      "materi": ["Bernapas adalah proses memasukkan serta mengeluarkan udara ke dan dari dalam tubuh. Udara yang dimasukkan itu mengandung <strong>oksigen</strong>, sedangkan udara yang dikeluarkan mengandung <strong>karbon dioksida</strong> serta <strong>uap air</strong>. Oksigen yang masuk digunakan tubuh untuk melakukan proses <strong>respirasi</strong>, yaitu proses pemecahan zat-zat untuk menghasilkan energi.", "Energi digunakan makhluk hidup untuk melakukan seluruh aktifitas kehidupannya. Selain menghasilkan energi, respirasi juga menghasilkan karbon dioksida dan uap air yang akan dikeluarkan dari dalam tubuh melalui proses bernapas."]
+      "materi": ["./materi/a-0.html", "./materi/a-1.html"]
     }, {
       "name": "Guru 2",
       "index": 1,
       "message": "hay %playerName%, mau tau alat-alat pernapasan?",
-      "materi": ["<img class=\"pull-left\" src=\"./img/alat-pernapasan.jpg\"/>Sistem pernapasan tersusun atas saluran udara, bermula dari hidung faring, laring, trakea, bronkus, bronkiolus, dan berakhir pada jutaan kantong udara kecil yang membentuk paru-paru.", "Bernapas dimulai dari <strong>hidung</strong>, kemudian udara disaring dan dihangatkan oleh rambut hidung. Rambut-rambut hidung juga bertindak sebagai saringan. Rambut hidung tersebut menyaring partikel-partikel debu dan kotoran yang terbawa bersama  udara pernapasan. Bernapas juga dapat dilakukan melalui <strong>mulut</strong>, tetapi di dalam mulut udara tidak disaring.", "Dari hidung atau mulut, udara mengalir menuju paru-paru melalui faring, laring, dan tenggorokan (trakea). <ul><li>Faring merupakan saluran udara bersama makanan. Di ujung faring, terdapat katup epiglotis yang berfungsi untuk membuka dan menutupnya saluran menuju batang tenggorokan.</li><li>Laring merupakan bagian pangkal tenggorokan yang didalamnya terdapat kotak/pita suara. Udara yang telah melewati laring ini diteruskan ke batang tenggorokan.</li><li>Batang tenggorokan diperkuat oleh cincin-cincin tulang rawan yang mencegah batang tenggorok menekuk kedalam.</li><li>Dari tenggorok, udara akan masuk ke paru-paru melalui cabang batang tenggorok (bronkus). Didalam paru-paru bronkus bercabang-cabang lagi membentuk bronkiolus.</li></ul>", "Karbon dioksida dari darah dalam kapiler berdifusi ke dalam alveolus. Bersamaan dengan itu, oksigen berdifusi dari kapiler ke alveolus. Perpindahan oksigen dan karbon dioksida itu dinamakan pertukaran gas. Oksigen masuk ke dalam aliran darah dan karbon dioksida keluar dari aliran darah."]
+      "materi": ["./materi/b-0.html", "./materi/b-1.html", "./materi/b-2.html", "./materi/b-3.html"]
     }
   ],
   "quiz": [

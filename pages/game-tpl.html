@@ -13,21 +13,24 @@
     </section>
 
     <!-- <section id="belajar-cont" ng-show="currentState == 'belajar' || currentState == 'materi'"> -->
-        <div id="materi-area" ng-show="currentState == 'materi'">
+        <div id="materi-area" ng-show="showMateri">
             <div>
                 <div ng-bind-html="currentMateri" id="current-materi"></div>
             </div>
+            <ul class="menu bottom-left" ng-show="showPrevNext()">
+                <li class="button"><a href="javascript:void(0);" ng-click="selectMateri(-1)"><i class="glyphicon glyphicon-chevron-left"></i></a></li>
+                <li class="button"><a href="javascript:void(0);" ng-click="selectMateri(1)"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+            </ul>
             <ul class="menu bottom-right">
-                <li class="button" ng-show="showPrevNext()"><a href="javascript:void(0);" ng-click="selectMateri(-1)"><i class="glyphicon glyphicon-chevron-left"></i></a></li>
-                <li class="button" ng-show="showPrevNext()"><a href="javascript:void(0);" ng-click="selectMateri(1)"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+                <!-- <li class="button"><a href="javascript:void(0);" ng-click="openFullScreen('materi-area')"><i class="glyphicon" ng-class="{'glyphicon-fullscreen':!isFullScreen(), 'glyphicon-resize-small':isFullScreen()}"></i></a></li> -->
                 <li class="button"><a href="javascript:void(0);" ng-click="toggleMateri()"><i class="glyphicon glyphicon-remove"></i></a></li>
             </ul>
         </div>
-        <ul class="menu middle-right" ng-hide="currentState != 'belajar'">
+        <ul class="menu middle-right" ng-hide="currentState != 'belajar' || showMateri">
             <li class="button"><a href="javascript:void(0);" title="Maju" ng-mousedown="moveRight()" ng-mouseup="moveStop()"><i class="glyphicon glyphicon-hand-right"></i></a></li>
         </ul>
 
-        <ul class="menu middle-left" ng-hide="currentState != 'belajar'">
+        <ul class="menu middle-left" ng-hide="currentState != 'belajar' || showMateri">
             <li class="button"><a href="javascript:void(0);" title="Mundur" ng-mousedown="moveLeft()" ng-mouseup="moveStop()"><i class="glyphicon glyphicon-hand-left"></i></a></li>
         </ul>
     <!-- </section> -->
@@ -35,6 +38,7 @@
     <section id="quiz-cont" ng-if="currentState == 'quiz'">
         <table class="quest-cont" ng-if="quizState == 'quest'">
             <tbody>
+                <tr class="timer"><td colspan="4">{{ elapedTime }}</td></tr>
                 <tr class="quest"><td colspan="4" ng-bind-html="currentQest.quest"></td></tr>
                 <tr class="answer">
                     <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[0].id)">a</span></td><td ng-bind-html="currentQest.chooises[0].text"></td>
@@ -59,7 +63,7 @@
 
     <ul class="menu top-left" ng-show="currentState && currentState != 'loading'">
         <li class="button"><a href="javascript:void(0);" ng-click="openAbout()" title="Tentang"> <i class="glyphicon glyphicon-info-sign"></i> </a></li>
-        <li class="button" ng-hide="currentState == 'menu' || currentState == 'materi'"><a href="javascript:void(0);" ng-click="showMenu()" title="Menu"> <i class="glyphicon glyphicon-tasks"></i> </a></li>
+        <li class="button" ng-hide="currentState == 'menu'"><a href="javascript:void(0);" ng-click="showMenu()" title="Menu"> <i class="glyphicon glyphicon-tasks"></i> </a></li>
     </ul>
 
     <ul class="menu top-right" ng-show="currentState && currentState != 'loading'">
@@ -67,4 +71,11 @@
         <li class="button"><a href="javascript:void(0);" title="Mute" ng-click="toogleMute()"> <i class="glyphicon" ng-class="{'glyphicon-volume-off':isMute, 'glyphicon-volume-up':!isMute}"></i> </a></li>
     </ul>
 
+    <!-- <section id="quiz-cont" ng-if="currentState == 'loading'">
+        <div class="quiz-result">
+            <div class="title">Skor</div>
+            <span rating value="currentQuiz.rating" max="currentQuiz.maxRating" readonly="true"></span>
+            <div class="button" ng-click="showQuiz()"><i class="glyphicon glyphicon-refresh"></i></div>
+        </div>
+    </section> -->
 </div>

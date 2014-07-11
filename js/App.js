@@ -14,7 +14,7 @@ function($stateProvider, $urlRouterProvider) {
     };
 
     // Default page ketika pertama kali load halaman
-    $urlRouterProvider.otherwise(home.url, {dev:true});
+    $urlRouterProvider.otherwise(home.url);
 
     // Daftarkan state ke stateProvider
     $stateProvider.state(home);

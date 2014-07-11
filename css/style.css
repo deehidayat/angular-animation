@@ -8,6 +8,9 @@ html, body, #tbl_wrap, body > div {
     margin: 0;
     overflow: hidden;
 }
+.modal {
+    overflow-y: auto;
+}
 .button {
     list-style: none;
     display: inline-block;
@@ -169,9 +172,13 @@ html, body, #tbl_wrap, body > div {
     padding: 10px;
     background-color: #59554D;
     border: 5px solid #FFFF00;
-    border-radius: 20px;
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+:-webkit-full-screen #materi-area {
+    width: 100%;
+    height: 100%;
 }
 #materi-area > div {
     width: 100%;
@@ -207,6 +214,7 @@ html, body, #tbl_wrap, body > div {
     max-width: 100%;
     overflow: auto;
     font-size: 16px;
+    padding-right: 5px;
 }
 #current-materi strong {
     color: #FF0;
@@ -223,7 +231,7 @@ html, body, #tbl_wrap, body > div {
 #quiz-cont table {
     width: 90%;
     position: relative;
-    top: 200px;
+    top: 150px;
     margin: auto;
     font-size: 16px;
 }
@@ -237,6 +245,13 @@ html, body, #tbl_wrap, body > div {
     font-size: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
+    height: 115px;
+    overflow: auto;
+}
+#quiz-cont table .timer td {
+    font-size: 20px;
+    color: #0000FF;
+    text-align: right;
 }
 #quiz-cont table td.chooises {
     /*color: #000000;*/
@@ -252,6 +267,6 @@ html, body, #tbl_wrap, body > div {
 }
 #quiz-cont .quiz-result > span {
     font-size: 46px;
-    color: #FF0;
+    color: #57B86A;
     display: block;
 }

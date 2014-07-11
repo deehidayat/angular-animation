@@ -1,5 +1,5 @@
 angular.module('DeeDirective',['ngSanitize', 'Constructor'])
-.directive('game', ['$stateParams', '$modal', '$document', '$http', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($stateParams, $modal, $document, $http, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
+.directive('game', ['$stateParams', '$modal', '$document', '$http', '$interval', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($stateParams, $modal, $document, $http, $interval, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
     return {
         templateUrl : 'pages/game-tpl.html',
         replace : true,
@@ -18,7 +18,9 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 KEYCODE_RIGHT = 39,
                 KEYCODE_W = 87,
                 KEYCODE_A = 65,
-                KEYCODE_D = 68;
+                KEYCODE_D = 68,
+                KEYCODE_I = 73,
+                KEYCODE_M = 77;
             var preload, manifest;
             var lfHeld = false, rtHeld = false;
             var stage, width, height, bgMusic;  // Canvas w - h
@@ -40,23 +42,24 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
             var config; // Untuk menampung konfigurasi file
             scope.prevState = null;
             scope.currentState = null;
-            scope.isFullScreen = false;
             scope.isMute = false;
 
             // Halaman Belajar
-            var player, teacher = new Array(), currentTeacher = -1, countTeacher;
-            var distance = 0;
+            var player, belajarMusic;
+            var teacher = new Array(), currentTeacher = -1, countTeacher, idxMateri = 0;
+            var landmark, distance = 0;
             var bubbleContainer, speechBubble, speechText;
-            var idxMateri = 0;
             scope.currentMateri = null;
+            scope.showMateri = false;
             // var hypnosis =  ['Belajar Biologi itu menyenangkan', 'Belajar Biologi itu mudah', 'Belajar Biologi itu tidak susah'];
             // var hypnosisText;
 
             // Halaman Quiz
-            var idxQuiz = 0;
+            var idxQuiz = 0, quizMusic;
             scope.currentQuiz = {
                 trueAnswer : 0,
                 falseAnswer : 0,
+                time : 0,
                 startTime : null,
                 finishTime : null,
                 rating : 0,
@@ -73,19 +76,25 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 height = stage.canvas.height;
 
                 // enable touch interactions if supported on the current device:
-                createjs.Touch.enable(stage);
+                // createjs.Touch.enable(stage);
 
                 // enable mouse over / out events, required for button rollovers
-                stage.enableMouseOver(10);
+                // stage.enableMouseOver(10);
 
                 createSplash();
 
                 // begin loading content (only sounds to load)
                 var assetsPath = 'assets/';
                 manifest = [
-                    {src:'belajarButton.png', id:'buttonBelajar'},
-                    {src:'quizButton.png', id:'buttonQuiz'},
-                    {src:'M-GameBG.ogg', id:'music2'},
+                    {src:'funk.ogg', id:'quizMusic'},
+                    {src:'Just-Bee.ogg', id:'belajarMusic'},
+                    {src:'Game-Spawn.ogg', id:'gameSpawn'},
+                    {src:'beep-ok.ogg', id:'beepOk'},
+                    {src:'beep-error.ogg', id:'beepError'},
+                    {src:'click.ogg', id:'click'},
+                    {src:'futuristic.ogg', id:'futuristic'},
+                    {src:'wind.ogg', id:'wind'},
+                    {src:'landmark5.png', id:'landmark'},
                     {src:'layerneg2_fog.png', id:'fog'},
                     {src:'layerneg2_fog2.png', id:'fog2'},
                     {src:'sky.png', id:'sky'},
@@ -96,7 +105,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
 
                 createjs.Sound.alternateExtensions = ['mp3'];
                 preload = new createjs.LoadQueue(true, assetsPath);
-                if(!$stateParams.dev)
+                if($stateParams.dev != true)
                     preload.installPlugin(createjs.Sound);
                 preload.addEventListener('complete', doneLoading);
                 preload.addEventListener('progress', updateLoading);
@@ -108,14 +117,11 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 //cross browser issues exist
                 if(!e){ var e = window.event; }
                 switch(e.keyCode) {
-                    case KEYCODE_SPACE: toggleMateri(true); return false;
-                    case KEYCODE_A:
-                    case KEYCODE_LEFT:  lfHeld = true; return false;
-                    case KEYCODE_D:
-                    case KEYCODE_RIGHT: rtHeld = true; return false;
-                    case KEYCODE_W:
-                    case KEYCODE_UP:    fwdHeld = true; return false;
-                    case KEYCODE_ENTER:  if(canvas.onclick == handleClick){ handleClick(); }return false;
+                    case KEYCODE_I: scope.openAbout(); break;
+                    case KEYCODE_M: scope.toogleMute(true); break;
+                    case KEYCODE_SPACE: toggleMateri(true); break;
+                    case KEYCODE_LEFT:  scope.moveLeft(); break;
+                    case KEYCODE_RIGHT: scope.moveRight(); break;
                 }
             }
 
@@ -123,13 +129,8 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 //cross browser issues exist
                 if(!e){ var e = window.event; }
                 switch(e.keyCode) {
-                    case KEYCODE_SPACE: shootHeld = false; break;
-                    case KEYCODE_A:
-                    case KEYCODE_LEFT:  lfHeld = false; break;
-                    case KEYCODE_D:
-                    case KEYCODE_RIGHT: rtHeld = false; break;
-                    case KEYCODE_W:
-                    case KEYCODE_UP:    fwdHeld = false; break;
+                    case KEYCODE_LEFT:  scope.moveStop(); break;
+                    case KEYCODE_RIGHT: scope.moveStop(); break;
                 }
             }
 
@@ -237,12 +238,12 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     createjs.Ticker.addEventListener('tick', tick);
                 }
 
+                createjs.Sound.play('wind', {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.2});
                 scope.showMenu(true);
-                // start the music
-                bgMusic = createjs.Sound.play('music2', {xinterrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.4});
             }
 
             scope.openAbout = function() {
+                createjs.Sound.play('click', {xinterrupt:createjs.Sound.INTERRUPT_ANY, volume:0.4});
                 createjs.Ticker.setPaused(true);
                 $modal.open({
                     templateUrl : './pages/about.html',
@@ -262,31 +263,37 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 var elem = document.getElementById(id);
                 if (elem.requestFullscreen) {
                     elem.requestFullscreen();
-                    $scope.isFullScreen = true;
                 } else if (elem.msRequestFullscreen) {
                     elem.msRequestFullscreen();
-                    $scope.isFullScreen = true;
                 } else if (elem.mozRequestFullScreen) {
                     elem.mozRequestFullScreen();
-                    $scope.isFullScreen = true;
                 } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
-                    $scope.isFullScreen = true;
                 } else if (elem.mozCancelFullScreen) {
                     elem.mozCancelFullScreen();
-                    $scope.isFullScreen = false;
                 } else if(elem.webkitCancelFullScreen){
                     elem.webkitCancelFullScreen();
-                    $scope.isFullScreen = false;
                 }
             };
 
-            scope.toogleMute = function() {
+            scope.isFullScreen = function() {
+                return ((document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard methods
+      document.mozFullScreen || document.webkitIsFullScreen);
+            };
+
+            scope.toogleMute = function(apply) {
+                createjs.Sound.play('click', {xinterrupt:createjs.Sound.INTERRUPT_ANY, volume:0.4});
                 createjs.Sound.setMute(!scope.isMute);
-                scope.isMute = createjs.Sound.getMute();
+                if(!apply==true)
+                    scope.isMute = !scope.isMute;
+                else
+                    scope.$apply(function(){
+                        scope.isMute = !scope.isMute;
+                    });
             };
 
             function setState(state, apply) {
+                createjs.Sound.play('click', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:0.4});
                 if (state=='quiz') {
                    scope.quizState = 'quest';
                 }
@@ -298,6 +305,33 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                         scope.prevState = scope.currentState;
                         scope.currentState = state;
                     });
+                }
+                if (state=='materi')
+                    createjs.Sound.play('gameSpawn', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:0.8});
+
+                if (state=='belajar') {
+                    if(quizMusic)
+                        quizMusic.stop();
+                    if(!belajarMusic)
+                        belajarMusic = createjs.Sound.play('belajarMusic', {interrupt:createjs.Sound.INTERRUPT_ANY, loop:-1, volume:0.7});
+                    else
+                        belajarMusic.play();
+                } else if (state=='quiz') {
+                    if(belajarMusic)
+                        belajarMusic.stop();
+                    if(!quizMusic)
+                        quizMusic = createjs.Sound.play('quizMusic', {interrupt:createjs.Sound.INTERRUPT_ANY, loop:-1, volume:0.7});
+                    else
+                        quizMusic.play();
+                } else if (state=='menu') {
+                    if(!belajarMusic)
+                        belajarMusic = createjs.Sound.play('belajarMusic', {interrupt:createjs.Sound.INTERRUPT_ANY, loop:-1, volume:0.7});
+                    else
+                        belajarMusic.play();
+                    // if(belajarMusic)
+                        // belajarMusic.stop();
+                    // if(quizMusic)
+                        // quizMusic.stop();
                 }
             };
 
@@ -327,6 +361,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 player.x = 300;
                 player.y = playerY;
                 mainContainer.addChild(player);
+                distance = 0;
 
                 /**
                  * Untuk menampilkan Message dari teacher
@@ -374,6 +409,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                  * Membuat Guru
                  */
                 countTeacher = 0;
+                var jarak = 0;
                 for (var i=0, l=config.teacher.length; i<l; i++) {
                     var g = config.teacher[i];
                     if(!teacher[i]) {
@@ -390,7 +426,30 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     teacher[i].y = playerY;
                     mainContainer.addChild(teacher[i]);
                     countTeacher++;
+                    jarak += teacher[i].x;
                 };
+
+                if (!landmark) {
+                    landmark = new createjs.Bitmap(preload.getResult('landmark'));
+                }
+                landmark.setTransform(jarak, playerY-10, 0.5, 0.5);
+                landmark.cache(0, 0, width, height);
+                mainContainer.addChild(landmark);
+
+
+                // var text = new createjs.Text('DEEEE','30 serif');
+                // text.x =0;
+                // text.y =0;
+        // // var circle = new createjs.Shape();
+        // // circle.graphics.beginFill("#FF0000").drawCircle(0,0,50);
+        // // createjs.Tween.get(circle,{loop:true})
+            // // // .wait(1000) // wait for 1 second
+            // // .to({scaleX:0.2,scaleY:0.2}) // jump to the new scale properties (default duration of 0)
+            // // .set({x:100}, circle)
+            // // // .wait(1000)
+                // // // .set({y:200}, circle)
+            // // .to({scaleX:1,scaleY:1},1000,createjs.Ease.bounceOut);
+                // mainContainer.addChild(text);
 
 
                 // teacher[1] = BlueBird.create();
@@ -415,19 +474,27 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     idxMateri = 0;
                 else if(idxMateri<0)
                     idxMateri = teacher[currentTeacher].materi.length -1;
-                scope.currentMateri = teacher[currentTeacher].materi[idxMateri];
-                teacher[currentTeacher].learned = true;
+                var http  = $http.get(teacher[currentTeacher].materi[idxMateri],{cache:true});
+                http.success(function(data){
+                    scope.currentMateri = data;
+                    teacher[currentTeacher].learned = true;
+                });
+                return http;
             };
 
             scope.toggleMateri = toggleMateri = function (apply) {
-                if(scope.currentState == 'belajar') {
+                if(scope.currentState == 'belajar' && currentTeacher>-1 && !scope.showMateri) {
                     removeSpeech();
-                    scope.selectMateri();
-                    // materiContainer.visible = true;
-                    setState('materi', apply);
-                } else if (scope.currentState == 'materi') {
-                    // materiContainer.visible = false;
-                    setState('belajar', apply);
+                    scope.selectMateri().success(function(){
+                        scope.showMateri = true;
+                    });
+                } else if (scope.showMateri) {
+                    if(!apply)
+                        scope.showMateri = false;
+                    else
+                        scope.$apply(function(){
+                            scope.showMateri = false;
+                        });
                 }
             };
 
@@ -452,6 +519,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 for (var i=0; i<countTeacher; i++) {
                     teacher[i].x -= value;
                 }
+                landmark.x -= value;
             };
 
             function watchTeacherPosition() {
@@ -484,11 +552,17 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
             }
 
             scope.moveRight = function() {
-                rtHeld = true;
+                if(!scope.showMateri)
+                    rtHeld = true;
+                else
+                    scope.selectMateri(1);
             };
 
             scope.moveLeft = function() {
-                lfHeld = true;
+                if(!scope.showMateri)
+                    lfHeld = true;
+                else
+                    scope.selectMateri(-1);
             };
 
             scope.moveStop = function() {
@@ -498,18 +572,53 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
             /**
              * Halaman Quiz
              */
-            scope.showQuiz = function() {
+            var quizInterval;
+            scope.elapedTime = '0:0:0';
+            scope.showQuiz = function(apply) {
                 mainContainer.removeAllChildren();
 
                 scope.currentQuiz['trueAnswer'] = 0;
                 scope.currentQuiz['falseAnswer'] = 0;
                 scope.currentQuiz['rating'] = 0;
-                scope.currentQuiz['startTime'] = new Date().getMilliseconds();
-                scope.currentQuiz['finishTime'] = new Date().getMilliseconds();
+                scope.currentQuiz['time'] = 0;
+                scope.currentQuiz['startTime'] = new Date();
+                // scope.currentQuiz['finishTime'] = angular.copy(scope.currentQuiz['startTime']);
+
+                // Start Timer
+                scope.elapedTime = '0:0:0';
+                quizInterval = $interval(function(){
+                    quizTimer();
+                }, 1000);
 
                 selectQuiz();
-                setState('quiz');
+                setState('quiz', apply);
             };
+
+
+            function quizTimer() {
+                scope.currentQuiz['time']++;
+                var endTime = new Date();
+                // time difference in ms
+                var timeDiff = endTime - scope.currentQuiz['startTime'];
+                // strip the miliseconds
+                timeDiff /= 1000;
+                // get seconds
+                var seconds = Math.round(timeDiff % 60);
+                // remove seconds from the date
+                timeDiff = Math.floor(timeDiff / 60);
+                // get minutes
+                var minutes = Math.round(timeDiff % 60);
+                // remove minutes from the date
+                timeDiff = Math.floor(timeDiff / 60);
+                // get hours
+                var hours = Math.round(timeDiff % 24);
+                // remove hours from the date
+                timeDiff = Math.floor(timeDiff / 24);
+                // the rest of timeDiff is number of days
+                var days = timeDiff;
+                scope.elapedTime = hours + ":" + minutes + ":" + seconds;
+                // scope.elapedTime = moment.duration(timeDiff*-1).humanize();
+            }
 
             /**
              * Randomize array element order in-place.
@@ -540,29 +649,34 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
 
             scope.answerQuiz = function(id) {
                 if(scope.currentQest.answer == id) {
-                    $modal.open({
-                        template : '<div class="modal-body bg-primary"><i class="glyphicon glyphicon-ok"></i> Ok</div>',
-                        backdrop : 'static',
-                        controller : ['$timeout', '$modalInstance', function($timeout, $modalInstance){
-                            $timeout(function(){
-                                $modalInstance.close(true);
-                            }, 1000);
-                        }],
-                    }).result.then(function(result){
-                        if(result) {
+                    createjs.Sound.play('beepOk', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:1});
+                    // $modal.open({
+                        // template : '<div class="modal-body bg-primary"><i class="glyphicon glyphicon-ok"></i> Ok</div>',
+                        // backdrop : 'static',
+                        // controller : ['$timeout', '$modalInstance', function($timeout, $modalInstance){
+                            // $timeout(function(){
+                                // $modalInstance.close(true);
+                            // }, 1000);
+                        // }],
+                    // }).result.then(function(result){
+                        // if(result) {
                             scope.currentQuiz.trueAnswer++;
                             selectQuiz(1);
-                            console.log(scope.currentQuiz);
-                        }
-                    });
+                            // console.log(scope.currentQuiz);
+                        // }
+                    // });
                 } else {
+                    createjs.Sound.play('beepError', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:1});
                     scope.currentQuiz.falseAnswer++;
                     selectQuiz(1);
-                    console.log(scope.currentQuiz);
+                    // console.log(scope.currentQuiz);
                 }
             };
 
             function calculateRating() {
+                createjs.Sound.play('futuristic', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:0.8});
+                if(quizInterval) clearInterval(quizInterval);
+                // console.log(scope.currentQuiz['time']);
                 scope.currentQuiz.rating = Math.ceil(scope.currentQuiz.trueAnswer / config.quiz.length * scope.currentQuiz.maxRating);
                 return scope.quizState = 'result';
             }
@@ -584,12 +698,17 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
 
 
                 if(scope.currentState == 'belajar') {
+
+                    if (player.x >= landmark.x + 100) {
+                        rtHeld = lfHeld = false;
+                        return scope.showQuiz(true);
+                    }
                     player.tick();
 
                     /**
                      * Maju - Mundur
                      */
-                    if(rtHeld) {
+                    if(rtHeld && !scope.showMateri) {
                         if(player && player.currentAnimation == 'stand')
                             player.gotoAndPlay('walkRight');
 
@@ -612,7 +731,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                             player.x += player.velocity.x;
                             player.y += player.velocity.y;
                         }
-                    } else if (lfHeld && distance>=0) {
+                    } else if (lfHeld && !scope.showMateri && distance>=0) {
                         if(player && player.currentAnimation=='stand')
                             player.gotoAndPlay('walkLeft');
 
@@ -665,6 +784,9 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                     config = data;
                     init(elem.find('canvas')[0]);
                 });
+            });
+            elem.on('$destroy', function() {
+                stage.clear();
             });
         }
     };
