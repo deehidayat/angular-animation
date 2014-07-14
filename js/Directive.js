@@ -52,7 +52,10 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
             scope.currentMateri = null;
             scope.showMateri = false;
             // var hypnosis =  ['Belajar Biologi itu menyenangkan', 'Belajar Biologi itu mudah', 'Belajar Biologi itu tidak susah'];
-            // var hypnosisText;
+           
+            // Hypnosis
+            var hypnosisText;
+            var idxHypnosis = 0;
 
             // Halaman Quiz
             var idxQuiz = 0, quizMusic;
@@ -239,6 +242,8 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 }
 
                 createjs.Sound.play('wind', {interrupt:createjs.Sound.INTERRUPT_NONE, loop:-1, volume:0.2});
+
+                selectHypnosis();
                 scope.showMenu(true);
             }
 
@@ -335,6 +340,51 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 }
             };
 
+            scope.currentHypnosis = null;
+            function selectHypnosis(index) {
+                if(!index)
+                    idxHypnosis = 0;
+                else
+                    idxHypnosis += index;
+                if(idxHypnosis >= config.hypnosis.length)
+                    idxHypnosis = 0;
+                else if(idxHypnosis<0)
+                    idxHypnosis = config.hypnosis.length-1;
+
+                // if(!hypnosisText) {
+                    hypnosisText = new createjs.Container();
+
+                    var bg = new createjs.Shape();
+                    bg.graphics.beginStroke("#F00").beginFill("#00F").drawRect(0, 0, 300, 100);
+                    bg.x = width/2-150;
+                    bg.y = height/8;
+
+                    var text = new createjs.Text("---", "22px Arial", "#FF0");
+                    text.x = bg.x + 5;
+                    text.y = bg.y + 5;
+                    text.lineWidth = 290;
+                    hypnosisText.addChild(bg, text);
+                    mainContainer.addChild(hypnosisText);
+                    hypnosisText.scaleX = hypnosisText.scaleY = 0;
+                // }
+
+                createjs.Tween.get(hypnosisText,{loop:true})
+                    .wait(1000)
+                    .call(function(){
+                        idxHypnosis += 1;
+                        if(idxHypnosis >= config.hypnosis.length)
+                            idxHypnosis = 0;
+                        else if(idxHypnosis<0)
+                            idxHypnosis = config.hypnosis.length-1;
+                        text.text = config.hypnosis[idxHypnosis];
+                    })
+                    // .set({y:200}, circle)        
+                    .to({scaleX:1,scaleY:1, x:0, y:0},1000,createjs.Ease.bounceOut)
+                    .wait(5000) // wait for 1 second
+                    .to({scaleX:0.0,scaleY:0.0, x:0, y:0}, 500); // jump to the new scale properties (default duration of 0)
+                    // .set({x:100}, hypnosisText)
+            }
+
             /**
              * Halaman Menu
              */
@@ -397,14 +447,6 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 // mainContainer.addChild(materiContainer);
 
 
-                // hypnosisText = new createjs.Text('--', 'bold 30px Unkempt', '#59554D');
-                // // hypnosisText.text = 'Belajar biologi itu gampang';
-                // // hypnosisText.x = 1000;
-                // hypnosisText.y = height * 0.5;
-                // hypnosisText.lineWidth = 300;
-                // hypnosisText.visible = false;
-                // mainContainer.addChild(hypnosisText);
-
                 /**
                  * Membuat Guru
                  */
@@ -436,20 +478,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 landmark.cache(0, 0, width, height);
                 mainContainer.addChild(landmark);
 
-
-                // var text = new createjs.Text('DEEEE','30 serif');
-                // text.x =0;
-                // text.y =0;
-        // // var circle = new createjs.Shape();
-        // // circle.graphics.beginFill("#FF0000").drawCircle(0,0,50);
-        // // createjs.Tween.get(circle,{loop:true})
-            // // // .wait(1000) // wait for 1 second
-            // // .to({scaleX:0.2,scaleY:0.2}) // jump to the new scale properties (default duration of 0)
-            // // .set({x:100}, circle)
-            // // // .wait(1000)
-                // // // .set({y:200}, circle)
-            // // .to({scaleX:1,scaleY:1},1000,createjs.Ease.bounceOut);
-                // mainContainer.addChild(text);
+                selectHypnosis();
 
 
                 // teacher[1] = BlueBird.create();

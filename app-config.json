@@ -1,6 +1,13 @@
 {
   "playerName": "Ismet",
   "playerIndex": 0,
+  "hypnosis" : [
+    "Saya yakin sepenuh hati bisa belajar Biologi dengan mudah.",
+    "Belajar Biologi itu mudah dan menyenangkan.",
+    "Tidak ada hal yang tidak mungkin kalau saya mau berusaha, saya bisa mendapatkan nilai yang bagus dalam pelajaran Biologi.",
+    "Saya akan percaya diri dalam belajar Biologi",
+    "Aku harus bisa mendapatkan nilai yang bagus."
+  ],
   "teacher": [
     {
       "name": "Guru 1",
@@ -12,6 +19,11 @@
       "index": 1,
       "message": "hay %playerName%, mau tau alat-alat pernapasan?",
       "materi": ["./materi/b-0.html", "./materi/b-1.html", "./materi/b-2.html", "./materi/b-3.html"]
+    }, {
+      "name": "Guru 3",
+      "index": 4,
+      "message": "hay %playerName%, mau tau pernapasan manusia?",
+      "materi": ["./materi/c-0.html", "./materi/c-1.html", "./materi/c-2.html"]
     }
   ],
   "quiz": [
