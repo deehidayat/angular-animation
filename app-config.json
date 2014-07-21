@@ -1,28 +1,28 @@
 {
-  "playerName": "Ismet",
-  "playerIndex": 0,
-  "hypnosis" : [
-    "Saya yakin sepenuh hati bisa belajar Biologi dengan mudah.",
-    "Belajar Biologi itu mudah dan menyenangkan.",
-    "Tidak ada hal yang tidak mungkin kalau saya mau berusaha, saya bisa mendapatkan nilai yang bagus dalam pelajaran Biologi.",
-    "Saya akan percaya diri dalam belajar Biologi",
-    "Aku harus bisa mendapatkan nilai yang bagus."
-  ],
-  "teacher": [
+  "slides": [
     {
-      "name": "Guru 1",
-      "index": 2,
-      "message": "hay %playerName%, mau tau arti pernapasan?",
+      "label":"Pengertian Sistem Pernapasan",
+      "templateUrl":"pages/slide-materi.html",
+      "class":"primary",
+      "animate":"right",
       "materi": ["./materi/a-0.html", "./materi/a-1.html"]
     }, {
-      "name": "Guru 2",
-      "index": 1,
-      "message": "hay %playerName%, mau tau alat-alat pernapasan?",
+      "label":"Alat-Alat Pernapasan",
+      "templateUrl":"pages/slide-materi.html",
+      "class":"success",
+      "animate":"right",
       "materi": ["./materi/b-0.html", "./materi/b-1.html", "./materi/b-2.html", "./materi/b-3.html"]
     }, {
-      "name": "Guru 3",
-      "index": 4,
-      "message": "hay %playerName%, mau tau pernapasan manusia?",
+      "label":"Pernapasan Pada Manusia",
+      "templateUrl":"pages/slide-materi.html",
+      "class":"warning",
+      "animate":"right",
+      "materi": ["./materi/c-0.html", "./materi/c-1.html", "./materi/c-2.html"]
+    }, {
+      "label":"Pernapasan Pada Burung",
+      "templateUrl":"pages/slide-materi.html",
+      "class":"info",
+      "animate":"right",
       "materi": ["./materi/c-0.html", "./materi/c-1.html", "./materi/c-2.html"]
     }
   ],

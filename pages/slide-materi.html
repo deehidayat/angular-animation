@@ -1,0 +1,18 @@
+<section id="materi-cont" class="full-block bg-1">
+    <div id="materi-area" class="bg-{{currentSlide.class}}">
+        <div>
+            <div ng-include="currentMateri" id="current-materi"></div>
+        </div>
+        <ul class="menu bottom-left" ng-show="showPrevNext()">
+            <li><a class="button" href="javascript:void(0);" ng-click="selectMateri(-1)"><i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            <li><a class="button" href="javascript:void(0);" ng-click="selectMateri(1)"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+        </ul>
+        <ul class="menu bottom-right">
+            <!-- <li class="button"><a href="javascript:void(0);"
+            ng-click="openFullScreen('materi-area')"><i class="glyphicon"
+            ng-class="{'glyphicon-fullscreen':!isFullScreen(),
+            'glyphicon-resize-small':isFullScreen()}"></i></a></li> -->
+            <!-- <li class="button"><a href="javascript:void(0);" ng-click="toggleMateri()"><i class="glyphicon glyphicon-remove"></i></a></li> -->
+        </ul>
+    </div>
+</section>

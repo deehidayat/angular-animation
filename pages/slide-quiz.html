@@ -1,0 +1,33 @@
+<section id="quiz-cont" class="bg-2">
+    <table class="quest-cont" ng-show="quizState == 'quest'">
+        <tbody>
+            <tr>
+                <td colspan="4" class="timer">{{ elapedTime }}</td>
+            </tr>
+            <tr class="quest animated bounceInLeft">
+                <td colspan="4" ng-bind-html="currentQest.quest"></td>
+            </tr>
+            <tr class="answer animated bounceInLeft">
+                <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[0].id)">a</span></td><td ng-bind-html="currentQest.chooises[0].text"></td>
+                <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[2].id)">c</span></td><td ng-bind-html="currentQest.chooises[2].text"></td>
+            </tr>
+            <tr class="answer animated bounceInLeft">
+                <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[1].id)">b</span></td><td ng-bind-html="currentQest.chooises[1].text"></td>
+                <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[3].id)">d</span></td><td ng-bind-html="currentQest.chooises[3].text"></td>
+            </tr>
+            <tr class="answer animated bounceInLeft">
+                <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[4].id)">e</span></td><td ng-bind-html="currentQest.chooises[4].text"></td>
+                <td class="disabled" colspan="2"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="quiz-result" ng-show="quizState == 'result'">
+        <div class="title">
+            Skor
+        </div>
+        <span rating value="currentQuiz.rating" max="currentQuiz.maxRating" readonly="true"></span>
+        <div class="button" ng-click="quizSlide.click()">
+            <i class="glyphicon glyphicon-refresh"></i>
+        </div>
+    </div>
+</section>

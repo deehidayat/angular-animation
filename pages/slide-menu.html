@@ -1,0 +1,25 @@
+<section id="menu-cont" class="bg-1">
+    <div class="title-cont">
+        <div class="title">
+            Pengenalan Sistem Pernapasan
+        </div>
+        <div class="subtitle">
+            Biologi Kelas XI
+        </div>
+    </div>
+    <ul class="button-cont">
+        <li ng-repeat="slide in slides" >
+            <button class="btn btn-shadow btn-{{slide.class}}" ng-click="selectSlide(slide)">
+                {{ slide.label }}
+            </button></li>
+    </ul>
+    <div id="guru-cont">
+        <img src="assets/guru.png" />
+    </div>
+    <!-- <div >
+    <button ng-click="select(slide)" class="btn-shadow" ng-repeat="slide in
+    slides" ng-class="{active: slide==currentSlide}">
+    {{ slide.label }}
+    </button>
+    </div> -->
+</section>

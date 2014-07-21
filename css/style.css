@@ -1,3 +1,7 @@
+@font-face {
+    font-family: 'digital';
+    src: url('../fonts/DS-DIGI.TTF');
+}
 body {
     background-color: #000;
 }
@@ -16,33 +20,50 @@ html, body, #tbl_wrap, body > div {
     display: inline-block;
     /*padding: 5px;*/
     color: #000000;
-    background-color: rgba(255,255,255,1);
-    opacity: 0.5;
+    background-color: rgba(255,255,255,0.5);
+    /*opacity: 0.5;*/
     width: 32px;
     height: 32px;
-    border-radius: 20px;
-    line-height: 32px;
+    border-radius: 50%;
+    line-height: 28px;
     text-align: center;
     color: #000000;
     cursor: pointer;
+    border: 2px solid #FFFFFF;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
-.button:hover {
-    background-color: #59554D;
+.button.big-button {
+    width: 48px;
+    height: 48px;
+    line-height: 40px;
+    font-size: 20px;
+    border-width: 4px;
+}
+.button:hover, .button.active {
+    background-color: #498192;
     color: #FFFFFF;
-    opacity: 1;
+    /*opacity: 1;*/
 }
-.menu {
+ul.menu {
     display: inline-block;
     padding: 0;
     margin: 0;
 }
-.menu a {
+.menu li {
+    display: inline-block;
+    /*margin: 0 2px;*/
+}
+/*ul.menu a {
     color: #000000;
     display: block;
 }
-.menu a:hover {
+ul.menu a:hover, ul.menu .active a {
     color: #FFFFFF;
-}
+}*/
 .top-left {
     position: absolute;
     top: 10px;
@@ -157,8 +178,8 @@ html, body, #tbl_wrap, body > div {
     width: 664px;
 }
 #menu-cont, #belajar-cont, #quiz-cont {
-    height: 498px;
-    width: 664px;
+    height: 100%;
+    width: 100%;
     position: absolute;
     top: 0;
     left: 0;
@@ -189,12 +210,19 @@ html, body, #tbl_wrap, body > div {
     top: 250px;
     padding: 0;
     margin: 0;
-    width: 100%;
+    width: 300px;
+    margin-left: 10px;
 }
 #menu-cont ul.button-cont > li {
-    display: inline-block;
+    /*display: inline-block;*/
     list-style: none;
     text-align: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+#menu-cont ul.button-cont > li button {
+    width: 100%;
+    height: 50px;
 }
 
 /**
@@ -203,10 +231,10 @@ html, body, #tbl_wrap, body > div {
 #materi-area {
     position: absolute;
     display: block;
-    width: 600px;
-    height: 260px;
-    top: 46px;
-    left: 32px;
+    width: 90%;
+    height: 80%;
+    top: 70px;
+    left: 5%;
     padding: 10px;
     background-color: #59554D;
     border: 5px solid #FFFF00;
@@ -221,7 +249,7 @@ html, body, #tbl_wrap, body > div {
 #materi-area > div {
     width: 100%;
     height: 100%;
-    background-color: #59554D;
+    /*background-color: #59554D;*/
     margin: 0px;
     display: block;
     text-align: left;
@@ -229,24 +257,40 @@ html, body, #tbl_wrap, body > div {
     font-size: 14px;
     position: relative;
 }
-#materi-area .menu > *:hover {
+.bg-primary {
+    color: #FFF;
+    background-color: #428BCA !important;
+}
+.bg-success {
+    color: #FFF;
+    background-color: #5CB85C !important;
+}
+.bg-warning {
+    color: #FFF;
+    background-color: #F0AD4E !important;
+}
+.bg-info {
+    color: #FFF;
+    background-color: #5BC0DE !important;
+}
+/*#materi-area .menu > *:hover {
     background-color: #C2E1E7;
     opacity: 1;
-}
+}*/
 #materi-area .close {
     color: #00FF00;
     margin-right: 5px;
     z-index: 100;
     font-size: 22px;
 }
-#materi-area .menu > * {
+/*#materi-area .menu > * {
     color: #000000;
     width: 16px;
     height: 16px;
     border-radius: 10px;
     line-height: 16px;
     font-size: 8px;
-}
+}*/
 #current-materi {
     max-height: 90%;
     max-width: 100%;
@@ -286,10 +330,11 @@ html, body, #tbl_wrap, body > div {
     height: 115px;
     overflow: auto;
 }
-#quiz-cont table .timer td {
-    font-size: 20px;
-    color: #0000FF;
-    text-align: right;
+.timer {
+    font-size: 40px;
+    color: #FFFF00;
+    text-align: right !important;
+    font-family: digital;
 }
 #quiz-cont table td.chooises {
     /*color: #000000;*/
@@ -307,4 +352,137 @@ html, body, #tbl_wrap, body > div {
     font-size: 46px;
     color: #57B86A;
     display: block;
+}
+
+/* NEW */
+.btn-shadow {
+  /*color: white;*/
+  font-family: Helvetica, Arial, Sans-Serif;
+  font-size: 14px;
+  text-decoration: none;
+  text-shadow: -1px -1px 1px #616161;
+  position: relative;
+  /*padding: 15px 30px;*/
+  -webkit-box-shadow: 5px 5px 0 #666;
+  -moz-box-shadow: 5px 5px 0 #666;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  margin: 0 10px 0 0;
+  display: block;
+}
+
+.btn-shadow:hover, .btn-shadow.active {
+  -webkit-box-shadow: 0px 0px 0 #666;
+  -moz-box-shadow: 0px 0px 0 #666;
+  transition: 0px 0px 0 #666;
+  top: 5px;
+  left: 5px;
+}
+
+.slide-animate.ng-enter, .slide-animate.ng-leave {
+  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s;
+
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:block;
+}
+
+.slide-animate-down.ng-enter {
+  top:-600px;
+}
+.slide-animate-down.ng-enter.ng-enter-active {
+  top:0;
+}
+.slide-animate-down.ng-leave {
+  top:0;
+}
+.slide-animate-down.ng-leave.ng-leave-active {
+  top:600px;
+}
+
+.slide-animate-left.ng-enter {
+  left:-800px;
+}
+.slide-animate-left.ng-enter.ng-enter-active {
+  left:0;
+}
+.slide-animate-left.ng-leave {
+  left:0;
+}
+.slide-animate-left.ng-leave.ng-leave-active {
+  left:800px;
+}
+
+.slide-animate-right.ng-enter {
+  left:800px;
+}
+.slide-animate-right.ng-enter.ng-enter-active {
+  left:0;
+}
+.slide-animate-right.ng-leave {
+  left:0;
+}
+.slide-animate-right.ng-leave.ng-leave-active {
+  left:-800px;
+}
+
+.bg-1 {
+    background: url(../assets/bg-1.jpg) center;
+    background-size: cover;
+}
+.bg-2 {
+    background: url(../assets/bg-2.jpg) center;
+    background-size: cover;
+}
+#slide-container {
+    position: relative;
+    border: 1px solid white;
+    display: inline-block;
+    width: 800px;
+    height: 600px;
+    background: #000000;
+    overflow: hidden;
+}
+.full-block {
+    width: 100%;
+    height: 100%;
+}
+.progress {
+    height: 5%;
+    width: 60%;
+    top: 45%;
+    left: 20%;
+    position: absolute;
+}
+#slide-container .left-menu {
+    width: 200px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #000066;
+    z-index: 1;
+}
+#slide-container .left-menu button {
+    width: 180px;
+    margin: 10px auto;
+    min-height: 50px;
+}
+#slide-container .carousel-control {
+    display: none;
+}
+
+#guru-cont img {
+height: 300px;
+}
+#guru-cont {
+display: inline-block;
+position: absolute;
+left: 400px;
+bottom: 100px;
 }

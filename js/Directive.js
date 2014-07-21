@@ -1,4 +1,273 @@
-angular.module('DeeDirective',['ngSanitize', 'Constructor'])
+angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
+.directive('gameSlide',['$http', '$interval', function($http, $interval){
+    return {
+        templateUrl:'pages/game-slide-tpl.html',
+        replace:true,
+        scope : {
+            urlConfig : '@gameSlide'
+        },
+        controller : ['$scope',function($scope){
+            var preload;
+            $scope.completeLoading = false;
+            $scope.loadingProgress = 0;
+
+            $scope.config = {};
+            $scope.slides = [];
+
+            $scope.homeSlide = {
+                label:'Home',
+                templateUrl:'pages/slide-menu.html',
+                click:function(){
+                    $scope.selectSlide(this);
+                },
+                animate:'down'
+            };
+
+            $scope.quizSlide = {
+                label:'Quiz',
+                templateUrl:'pages/slide-quiz.html',
+                click:function(){
+                    $scope.selectSlide(this);
+                },
+                animate:'left'
+            };
+
+            $scope.aboutSlide = {
+                label:'About',
+                templateUrl:'pages/slide-about.html',
+                click:function(){
+                    $scope.selectSlide(this);
+                },
+                animate:'down'
+            };
+
+            $scope.initialize = function(config) {
+                $scope.config = config;
+                $scope.slides = $scope.config['slides'];
+                $scope.currentSlide = $scope.homeSlide;
+                var assetsPath = 'assets/';
+                var manifest = [
+                    {src:'funk.ogg', id:'quizMusic'},
+                    {src:'Just-Bee.ogg', id:'belajarMusic'},
+                    {src:'Game-Spawn.ogg', id:'gameSpawn'},
+                    {src:'beep-ok.ogg', id:'beepOk'},
+                    {src:'beep-error.ogg', id:'beepError'},
+                    {src:'click.ogg', id:'click'},
+                    {src:'futuristic.ogg', id:'futuristic'},
+                    {src:'wind.ogg', id:'wind'},
+                    {src:'landmark5.png', id:'landmark'},
+                    {src:'layerneg2_fog.png', id:'fog'},
+                    {src:'layerneg2_fog2.png', id:'fog2'},
+                    {src:'sky.png', id:'sky'},
+                    {src:'ground.png', id:'ground'},
+                    {src:'parallaxHill1.png', id:'hill'},
+                    {src:'parallaxHill2.png', id:'hill2'}
+                ];
+                createjs.Sound.alternateExtensions = ['mp3'];
+                preload = new createjs.LoadQueue(true, assetsPath);
+                preload.installPlugin(createjs.Sound);
+                preload.addEventListener('complete', doneLoading);
+                preload.addEventListener('progress', updateLoading);
+                preload.loadManifest(manifest);
+            };
+
+            function updateLoading(event) {
+                $scope.$apply(function() {
+                    $scope.loadingProgress = event.progress;
+                });
+            }
+
+            function doneLoading() {
+            }
+
+            $scope.restart = function() {
+                if ($scope.loadingProgress == 1) {
+                    $scope.completeLoading = true;
+                }
+            };
+
+            $scope.isMute = false;
+            $scope.toogleMute = function(apply) {
+                createjs.Sound.play('click', {xinterrupt:createjs.Sound.INTERRUPT_ANY, volume:0.4});
+                createjs.Sound.setMute(!$scope.isMute);
+                if(!apply==true)
+                    $scope.isMute = !$scope.isMute;
+                else
+                    $scope.$apply(function(){
+                        $scope.isMute = !$scope.isMute;
+                    });
+            };
+
+
+            // Quiz Ctrl
+            var quizInterval;
+            $scope.quizState = 'quest';
+            $scope.currentQuiz = {
+                trueAnswer:0,
+                falseAnswer:0,
+                time:0,
+                startTime:null,
+                finishTime:null,
+                rating:0,
+                maxRating:10
+            };
+            $scope.currentQest = null;
+            $scope.elapedTime = '0:0:0';
+
+            function resetQuiz() {
+                $scope.quizState = 'quest';
+                $scope.currentQuiz['trueAnswer'] = 0;
+                $scope.currentQuiz['falseAnswer'] = 0;
+                $scope.currentQuiz['rating'] = 0;
+                $scope.currentQuiz['time'] = 0;
+                $scope.currentQuiz['startTime'] = new Date();
+                // scope.currentQuiz['finishTime'] =
+                // angular.copy(scope.currentQuiz['startTime']);
+
+                // Start Timer
+                $scope.elapedTime = '0:0:0';
+                if (quizInterval)
+                    clearInterval(quizInterval);
+                quizInterval = $interval(function() {
+                    quizTimer();
+                }, 1000);
+
+                selectQuiz();
+            };
+
+            function quizTimer() {
+                $scope.currentQuiz['time']++;
+                var endTime = new Date();
+                // time difference in ms
+                var timeDiff = endTime - $scope.currentQuiz['startTime'];
+                // strip the miliseconds
+                timeDiff /= 1000;
+                // get seconds
+                var seconds = Math.round(timeDiff % 60);
+                // remove seconds from the date
+                timeDiff = Math.floor(timeDiff / 60);
+                // get minutes
+                var minutes = Math.round(timeDiff % 60);
+                // remove minutes from the date
+                timeDiff = Math.floor(timeDiff / 60);
+                // get hours
+                var hours = Math.round(timeDiff % 24);
+                // remove hours from the date
+                timeDiff = Math.floor(timeDiff / 24);
+                // the rest of timeDiff is number of days
+                var days = timeDiff;
+                $scope.elapedTime = hours + ":" + minutes + ":" + seconds;
+                // scope.elapedTime =
+                // moment.duration(timeDiff*-1).humanize();
+            }
+
+            /**
+             * Randomize array element order in-place.
+             * Using Fisher-Yates shuffle algorithm.
+             */
+            function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+                return array;
+            }
+
+            function selectQuiz(index) {
+                if (!index)
+                    idxQuiz = 0;
+                else
+                    idxQuiz += index;
+                if (idxQuiz >= $scope.config.quiz.length) {
+                    idxQuiz = 0;
+                    if (quizInterval)
+                        clearInterval(quizInterval);
+                    return calculateRating();
+                }
+                $scope.currentQest = $scope.config.quiz[idxQuiz];
+                // scope.currentQest.chooises =
+                // shuffleArray(scope.currentQest.chooises);
+            };
+
+            $scope.answerQuiz = function(id) {
+                if ($scope.currentQest.answer == id) {
+                    createjs.Sound.play('beepOk', {
+                        interrupt:createjs.Sound.INTERRUPT_ANY,
+                        volume:1
+                    });
+                    $scope.currentQuiz.trueAnswer++;
+                    selectQuiz(1);
+                } else {
+                    createjs.Sound.play('beepError', {
+                        interrupt:createjs.Sound.INTERRUPT_ANY,
+                        volume:1
+                    });
+                    $scope.currentQuiz.falseAnswer++;
+                    selectQuiz(1);
+                }
+            };
+
+            function calculateRating() {
+                createjs.Sound.play('futuristic', {
+                    interrupt:createjs.Sound.INTERRUPT_ANY,
+                    volume:0.8
+                });
+                $scope.currentQuiz.rating = Math.ceil($scope.currentQuiz.trueAnswer / $scope.config.quiz.length * $scope.currentQuiz.maxRating);
+                return $scope.quizState = 'result';
+            }
+            //--> End Quiz Ctrl
+
+            // Materi / Belajar
+            $scope.currentMateri;
+            var idxMateri = 0;
+            $scope.showPrevNext = function() {
+                return $scope.currentSlide.materi.length > 1;
+            };
+
+            $scope.selectMateri = function (index) {
+                if(!index)
+                    idxMateri = 0;
+                else
+                    idxMateri += index;
+                if(idxMateri >= $scope.currentSlide.materi.length)
+                    idxMateri = 0;
+                else if(idxMateri<0)
+                    idxMateri = $scope.currentSlide.materi.length - 1;
+
+                $scope.currentMateri = $scope.currentSlide.materi[idxMateri];
+            };
+            //--> End Materi
+
+
+            // Global
+            $scope.selectSlide = function(slide) {
+                $scope.currentSlide = slide;
+                if (slide != $scope.quizSlide) {
+                    if (quizInterval)
+                        clearInterval(quizInterval);
+                }
+                if (slide == $scope.quizSlide) {
+                    resetQuiz();
+                }
+                if ($scope.slides.indexOf(slide) != -1) {
+                    $scope.selectMateri(0);
+                }
+            };
+
+        }],
+        link : function(scope, elem, attrs, ctrl) {
+
+            elem.ready(function() {
+                $http.get(scope.urlConfig).success(function(data) {
+                    scope.initialize(data);
+                });
+            });
+
+        }
+    };
+}])
 .directive('game', ['$stateParams', '$modal', '$document', '$http', '$interval', 'LoadingBar', 'BitmapButton', 'Player', 'RedBird', 'BlueBird', 'Bubble', function($stateParams, $modal, $document, $http, $interval, LoadingBar, BitmapButton, Player, RedBird, BlueBird, Bubble){
     return {
         templateUrl : 'pages/game-tpl.html',
@@ -52,7 +321,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
             scope.currentMateri = null;
             scope.showMateri = false;
             // var hypnosis =  ['Belajar Biologi itu menyenangkan', 'Belajar Biologi itu mudah', 'Belajar Biologi itu tidak susah'];
-           
+
             // Hypnosis
             var hypnosisText;
             var idxHypnosis = 0;
@@ -378,7 +647,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                             idxHypnosis = config.hypnosis.length-1;
                         text.text = config.hypnosis[idxHypnosis];
                     })
-                    // .set({y:200}, circle)        
+                    // .set({y:200}, circle)
                     .to({scaleX:1,scaleY:1, x:0, y:0},1000,createjs.Ease.bounceOut)
                     .wait(5000) // wait for 1 second
                     .to({scaleX:0.0,scaleY:0.0, x:0, y:0}, 500); // jump to the new scale properties (default duration of 0)
@@ -598,117 +867,131 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor'])
                 rtHeld = lfHeld = false;
             };
 
-            /**
-             * Halaman Quiz
-             */
-            var quizInterval;
-            scope.elapedTime = '0:0:0';
-            scope.showQuiz = function(apply) {
-                mainContainer.removeAllChildren();
 
-                scope.currentQuiz['trueAnswer'] = 0;
-                scope.currentQuiz['falseAnswer'] = 0;
-                scope.currentQuiz['rating'] = 0;
-                scope.currentQuiz['time'] = 0;
-                scope.currentQuiz['startTime'] = new Date();
-                // scope.currentQuiz['finishTime'] = angular.copy(scope.currentQuiz['startTime']);
+    /**
+     * Halaman Quiz
+     */
+    var quizInterval;
+    scope.elapedTime = '0:0:0';
+    scope.showQuiz = function(apply) {
+        mainContainer.removeAllChildren();
 
-                // Start Timer
-                scope.elapedTime = '0:0:0';
-                quizInterval = $interval(function(){
-                    quizTimer();
-                }, 1000);
+        scope.currentQuiz['trueAnswer'] = 0;
+        scope.currentQuiz['falseAnswer'] = 0;
+        scope.currentQuiz['rating'] = 0;
+        scope.currentQuiz['time'] = 0;
+        scope.currentQuiz['startTime'] = new Date();
+        // scope.currentQuiz['finishTime'] =
+        // angular.copy(scope.currentQuiz['startTime']);
 
-                selectQuiz();
-                setState('quiz', apply);
-            };
+        // Start Timer
+        scope.elapedTime = '0:0:0';
+        quizInterval = $interval(function() {
+            quizTimer();
+        }, 1000);
 
+        selectQuiz();
+        setState('quiz', apply);
+    };
 
-            function quizTimer() {
-                scope.currentQuiz['time']++;
-                var endTime = new Date();
-                // time difference in ms
-                var timeDiff = endTime - scope.currentQuiz['startTime'];
-                // strip the miliseconds
-                timeDiff /= 1000;
-                // get seconds
-                var seconds = Math.round(timeDiff % 60);
-                // remove seconds from the date
-                timeDiff = Math.floor(timeDiff / 60);
-                // get minutes
-                var minutes = Math.round(timeDiff % 60);
-                // remove minutes from the date
-                timeDiff = Math.floor(timeDiff / 60);
-                // get hours
-                var hours = Math.round(timeDiff % 24);
-                // remove hours from the date
-                timeDiff = Math.floor(timeDiff / 24);
-                // the rest of timeDiff is number of days
-                var days = timeDiff;
-                scope.elapedTime = hours + ":" + minutes + ":" + seconds;
-                // scope.elapedTime = moment.duration(timeDiff*-1).humanize();
-            }
+    function quizTimer() {
+        scope.currentQuiz['time']++;
+        var endTime = new Date();
+        // time difference in ms
+        var timeDiff = endTime - scope.currentQuiz['startTime'];
+        // strip the miliseconds
+        timeDiff /= 1000;
+        // get seconds
+        var seconds = Math.round(timeDiff % 60);
+        // remove seconds from the date
+        timeDiff = Math.floor(timeDiff / 60);
+        // get minutes
+        var minutes = Math.round(timeDiff % 60);
+        // remove minutes from the date
+        timeDiff = Math.floor(timeDiff / 60);
+        // get hours
+        var hours = Math.round(timeDiff % 24);
+        // remove hours from the date
+        timeDiff = Math.floor(timeDiff / 24);
+        // the rest of timeDiff is number of days
+        var days = timeDiff;
+        scope.elapedTime = hours + ":" + minutes + ":" + seconds;
+        // scope.elapedTime = moment.duration(timeDiff*-1).humanize();
+    }
 
-            /**
-             * Randomize array element order in-place.
-             * Using Fisher-Yates shuffle algorithm.
-             */
-            function shuffleArray(array) {
-                for (var i = array.length - 1; i > 0; i--) {
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                }
-                return array;
-            }
+    /**
+     * Randomize array element order in-place.
+     * Using Fisher-Yates shuffle algorithm.
+     */
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
 
-            function selectQuiz(index) {
-                if(!index)
-                    idxQuiz = 0;
-                else
-                    idxQuiz += index;
-                if(idxQuiz >= config.quiz.length) {
-                    idxQuiz = 0;
-                    return calculateRating();
-                }
-                scope.currentQest = config.quiz[idxQuiz];
-                // scope.currentQest.chooises = shuffleArray(scope.currentQest.chooises);
-            };
+    function selectQuiz(index) {
+        if (!index)
+            idxQuiz = 0;
+        else
+            idxQuiz += index;
+        if (idxQuiz >= config.quiz.length) {
+            idxQuiz = 0;
+            return calculateRating();
+        }
+        scope.currentQest = config.quiz[idxQuiz];
+        // scope.currentQest.chooises = shuffleArray(scope.currentQest.chooises);
+    };
 
-            scope.answerQuiz = function(id) {
-                if(scope.currentQest.answer == id) {
-                    createjs.Sound.play('beepOk', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:1});
-                    // $modal.open({
-                        // template : '<div class="modal-body bg-primary"><i class="glyphicon glyphicon-ok"></i> Ok</div>',
-                        // backdrop : 'static',
-                        // controller : ['$timeout', '$modalInstance', function($timeout, $modalInstance){
-                            // $timeout(function(){
-                                // $modalInstance.close(true);
-                            // }, 1000);
-                        // }],
-                    // }).result.then(function(result){
-                        // if(result) {
-                            scope.currentQuiz.trueAnswer++;
-                            selectQuiz(1);
-                            // console.log(scope.currentQuiz);
-                        // }
-                    // });
-                } else {
-                    createjs.Sound.play('beepError', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:1});
-                    scope.currentQuiz.falseAnswer++;
-                    selectQuiz(1);
-                    // console.log(scope.currentQuiz);
-                }
-            };
+    scope.answerQuiz = function(id) {
+        if (scope.currentQest.answer == id) {
+            createjs.Sound.play('beepOk', {
+                interrupt:createjs.Sound.INTERRUPT_ANY,
+                volume:1
+            });
+            // $modal.open({
+            // template : '<div class="modal-body bg-primary"><i class="glyphicon
+            // glyphicon-ok"></i> Ok</div>',
+            // backdrop : 'static',
+            // controller : ['$timeout', '$modalInstance', function($timeout,
+            // $modalInstance){
+            // $timeout(function(){
+            // $modalInstance.close(true);
+            // }, 1000);
+            // }],
+            // }).result.then(function(result){
+            // if(result) {
+            scope.currentQuiz.trueAnswer++;
+            selectQuiz(1);
+            // console.log(scope.currentQuiz);
+            // }
+            // });
+        } else {
+            createjs.Sound.play('beepError', {
+                interrupt:createjs.Sound.INTERRUPT_ANY,
+                volume:1
+            });
+            scope.currentQuiz.falseAnswer++;
+            selectQuiz(1);
+            // console.log(scope.currentQuiz);
+        }
+    };
 
-            function calculateRating() {
-                createjs.Sound.play('futuristic', {interrupt:createjs.Sound.INTERRUPT_ANY, volume:0.8});
-                if(quizInterval) clearInterval(quizInterval);
-                // console.log(scope.currentQuiz['time']);
-                scope.currentQuiz.rating = Math.ceil(scope.currentQuiz.trueAnswer / config.quiz.length * scope.currentQuiz.maxRating);
-                return scope.quizState = 'result';
-            }
+    function calculateRating() {
+        createjs.Sound.play('futuristic', {
+            interrupt:createjs.Sound.INTERRUPT_ANY,
+            volume:0.8
+        });
+        if (quizInterval)
+            clearInterval(quizInterval);
+        // console.log(scope.currentQuiz['time']);
+        scope.currentQuiz.rating = Math.ceil(scope.currentQuiz.trueAnswer / config.quiz.length * scope.currentQuiz.maxRating);
+        return scope.quizState = 'result';
+    }
+
 
 
             function tick(event) {
