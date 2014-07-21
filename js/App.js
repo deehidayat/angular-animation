@@ -3,7 +3,7 @@ function($stateProvider, $urlRouterProvider) {
 
     var home = {
         name:'home',
-        url:'/?dev',
+        url:'/',
         views : {
             '@' : {
                 templateUrl:'./pages/home.html',

@@ -7,9 +7,9 @@
             Biologi Kelas XI
         </div>
     </div>
-    <ul class="button-cont">
+    <ul class="button-cont animated shake">
         <li ng-repeat="slide in slides" >
-            <button class="btn btn-shadow btn-{{slide.class}}" ng-click="selectSlide(slide)">
+            <button class="btn btn-shadow btn-{{slide.class}}" ng-click="selectSlide(slide)" ng-mouseenter="playSound('click')">
                 {{ slide.label }}
             </button></li>
     </ul>

@@ -1,5 +1,5 @@
 angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
-.directive('gameSlide',['$http', '$interval', function($http, $interval){
+.directive('gameSlide',['$http', '$interval', '$timeout', function($http, $interval, $timeout){
     return {
         templateUrl:'pages/game-slide-tpl.html',
         replace:true,
@@ -20,7 +20,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                 click:function(){
                     $scope.selectSlide(this);
                 },
-                animate:'down'
+                // animate:'slide-animate slide-animate-down'
             };
 
             $scope.quizSlide = {
@@ -29,7 +29,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                 click:function(){
                     $scope.selectSlide(this);
                 },
-                animate:'left'
+                animate:'slide-animate slide-animate-left'
             };
 
             $scope.aboutSlide = {
@@ -38,30 +38,21 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                 click:function(){
                     $scope.selectSlide(this);
                 },
-                animate:'down'
+                // animate:'slide-animate slide-animate-down'
             };
 
             $scope.initialize = function(config) {
                 $scope.config = config;
                 $scope.slides = $scope.config['slides'];
-                $scope.currentSlide = $scope.homeSlide;
                 var assetsPath = 'assets/';
                 var manifest = [
                     {src:'funk.ogg', id:'quizMusic'},
                     {src:'Just-Bee.ogg', id:'belajarMusic'},
-                    {src:'Game-Spawn.ogg', id:'gameSpawn'},
                     {src:'beep-ok.ogg', id:'beepOk'},
                     {src:'beep-error.ogg', id:'beepError'},
                     {src:'click.ogg', id:'click'},
-                    {src:'futuristic.ogg', id:'futuristic'},
-                    {src:'wind.ogg', id:'wind'},
-                    {src:'landmark5.png', id:'landmark'},
-                    {src:'layerneg2_fog.png', id:'fog'},
-                    {src:'layerneg2_fog2.png', id:'fog2'},
-                    {src:'sky.png', id:'sky'},
-                    {src:'ground.png', id:'ground'},
-                    {src:'parallaxHill1.png', id:'hill'},
-                    {src:'parallaxHill2.png', id:'hill2'}
+                    {src:'Chill.ogg', id:'chill'},
+                    {src:'Chillvolution.ogg', id:'chillvolution'},
                 ];
                 createjs.Sound.alternateExtensions = ['mp3'];
                 preload = new createjs.LoadQueue(true, assetsPath);
@@ -83,12 +74,12 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
             $scope.restart = function() {
                 if ($scope.loadingProgress == 1) {
                     $scope.completeLoading = true;
+                    $scope.selectSlide($scope.homeSlide);
                 }
             };
 
             $scope.isMute = false;
             $scope.toogleMute = function(apply) {
-                createjs.Sound.play('click', {xinterrupt:createjs.Sound.INTERRUPT_ANY, volume:0.4});
                 createjs.Sound.setMute(!$scope.isMute);
                 if(!apply==true)
                     $scope.isMute = !$scope.isMute;
@@ -98,6 +89,11 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                     });
             };
 
+            $scope.playSound = function(id,vol) {
+                id = id ? id : 'click';
+                vol = vol ? vol : 0.1;
+                createjs.Sound.play(id, {interrupt:createjs.Sound.INTERRUPT_ANY, volume:vol});
+            };
 
             // Quiz Ctrl
             var quizInterval;
@@ -176,6 +172,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
             }
 
             function selectQuiz(index) {
+                $scope.showAnswer = false;
                 if (!index)
                     idxQuiz = 0;
                 else
@@ -191,29 +188,27 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                 // shuffleArray(scope.currentQest.chooises);
             };
 
+            $scope.showAnswer = false;
+            var aTimer = null;
             $scope.answerQuiz = function(id) {
+                if(aTimer) return false;
                 if ($scope.currentQest.answer == id) {
-                    createjs.Sound.play('beepOk', {
-                        interrupt:createjs.Sound.INTERRUPT_ANY,
-                        volume:1
-                    });
+                    $scope.playSound('beepOk', 0.05);
                     $scope.currentQuiz.trueAnswer++;
                     selectQuiz(1);
                 } else {
-                    createjs.Sound.play('beepError', {
-                        interrupt:createjs.Sound.INTERRUPT_ANY,
-                        volume:1
-                    });
+                    $scope.playSound('beepError', 0.05);
                     $scope.currentQuiz.falseAnswer++;
-                    selectQuiz(1);
+                    $scope.showAnswer = true;
+                    aTimer = $timeout(function(){
+                        selectQuiz(1);
+                        aTimer = null;
+                    },2000);
                 }
             };
 
             function calculateRating() {
-                createjs.Sound.play('futuristic', {
-                    interrupt:createjs.Sound.INTERRUPT_ANY,
-                    volume:0.8
-                });
+                $scope.playSound('futuristic', 0.5);
                 $scope.currentQuiz.rating = Math.ceil($scope.currentQuiz.trueAnswer / $scope.config.quiz.length * $scope.currentQuiz.maxRating);
                 return $scope.quizState = 'result';
             }
@@ -223,7 +218,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
             $scope.currentMateri;
             var idxMateri = 0;
             $scope.showPrevNext = function() {
-                return $scope.currentSlide.materi.length > 1;
+                return $scope.currentSlide && $scope.currentSlide.materi && $scope.currentSlide.materi.length > 1;
             };
 
             $scope.selectMateri = function (index) {
@@ -242,15 +237,36 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
 
 
             // Global
+            var currentMusic, currentSound;
+            function changeMusic(id) {
+                if (currentMusic==id) return;
+                function reset() {
+                    if(currentSound) {
+                        currentSound.stop();
+                        currentSound = null;
+                    }
+                }
+                reset();
+                currentMusic = id;
+                currentSound = createjs.Sound.play(id, {interrupt:createjs.Sound.INTERRUPT_ANY, loop:-1, volume:0.7});
+            };
+
             $scope.selectSlide = function(slide) {
-                $scope.currentSlide = slide;
                 if (slide != $scope.quizSlide) {
                     if (quizInterval)
                         clearInterval(quizInterval);
                 }
+                if (slide == $scope.homeSlide) {
+                    changeMusic('belajarMusic');
+                } else
+                if (slide == $scope.aboutSlide) {
+                    changeMusic('chillvolution');
+                } else
                 if (slide == $scope.quizSlide) {
+                    changeMusic('quizMusic');
                     resetQuiz();
                 }
+                $scope.currentSlide = slide;
                 if ($scope.slides.indexOf(slide) != -1) {
                     $scope.selectMateri(0);
                 }

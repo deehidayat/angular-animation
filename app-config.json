@@ -4,25 +4,25 @@
       "label":"Pengertian Sistem Pernapasan",
       "templateUrl":"pages/slide-materi.html",
       "class":"primary",
-      "animate":"right",
+      "animate":"animated bounceIn",
       "materi": ["./materi/a-0.html", "./materi/a-1.html"]
     }, {
       "label":"Alat-Alat Pernapasan",
       "templateUrl":"pages/slide-materi.html",
       "class":"success",
-      "animate":"right",
+      "animate":"animated bounceIn",
       "materi": ["./materi/b-0.html", "./materi/b-1.html", "./materi/b-2.html", "./materi/b-3.html"]
     }, {
       "label":"Pernapasan Pada Manusia",
       "templateUrl":"pages/slide-materi.html",
       "class":"warning",
-      "animate":"right",
+      "animate":"animated bounceIn",
       "materi": ["./materi/c-0.html", "./materi/c-1.html", "./materi/c-2.html"]
     }, {
       "label":"Pernapasan Pada Burung",
       "templateUrl":"pages/slide-materi.html",
       "class":"info",
-      "animate":"right",
+      "animate":"animated bounceIn",
       "materi": ["./materi/c-0.html", "./materi/c-1.html", "./materi/c-2.html"]
     }
   ],

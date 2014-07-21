@@ -3,13 +3,13 @@
         <div class="full-block" ng-if="!completeLoading" ng-click="restart()">
             <div progressbar class="progress-striped"  value="loadingProgress" type="success" max="1" ng-class="{active:loadingProgress<1}"></div>
         </div>
-        <div class="full-block slide-animate slide-animate-{{currentSlide.animate}}" ng-include="currentSlide.templateUrl" ng-if="completeLoading"></div>
+        <div class="full-block {{currentSlide.animate}}" ng-include="currentSlide.templateUrl" ng-if="completeLoading"></div>
     </div>
     <ul class="menu top-right" ng-if="completeLoading">
-        <li><a class="button big-button" ng-class="{active:currentSlide===homeSlide}" href="javascript:void(0);" title="{{ homeSlide.label }}" ng-click="homeSlide.click()"> <i class="glyphicon glyphicon-home"></i> </a></li>
-        <li><a class="button big-button" ng-class="{active:currentSlide===quizSlide}" href="javascript:void(0);" title="{{ quizSlide.label }}" ng-click="quizSlide.click()"> <i class="glyphicon glyphicon-star"></i> </a></li>
-        <li><a class="button big-button" ng-class="{active:currentSlide===aboutSlide}" href="javascript:void(0);" title="{{ aboutSlide.label }}" ng-click="aboutSlide.click()"> <i class="glyphicon glyphicon-info-sign"></i> </a></li>
-        <li><a class="button big-button" href="javascript:void(0);" title="Mute" ng-click="toogleMute()"> <i class="glyphicon" ng-class="{'glyphicon-volume-off':isMute, 'glyphicon-volume-up':!isMute}"></i> </a></li>
+        <li><a class="button big-button" ng-class="{active:currentSlide===homeSlide}" href="javascript:void(0);" title="{{ homeSlide.label }}" ng-click="homeSlide.click()" ng-mouseenter="playSound('click')"> <i class="glyphicon glyphicon-home"></i> </a></li>
+        <li><a class="button big-button" ng-class="{active:currentSlide===quizSlide}" href="javascript:void(0);" title="{{ quizSlide.label }}" ng-click="quizSlide.click()" ng-mouseenter="playSound('click')"> <i class="glyphicon glyphicon-star"></i> </a></li>
+        <li><a class="button big-button" ng-class="{active:currentSlide===aboutSlide}" href="javascript:void(0);" title="{{ aboutSlide.label }}" ng-click="aboutSlide.click()" ng-mouseenter="playSound('click')"> <i class="fa fa-info"></i> </a></li>
+        <li><a class="button big-button" href="javascript:void(0);" title="Mute" ng-click="toogleMute()" ng-mouseenter="playSound('click')"> <i class="glyphicon" ng-class="{'glyphicon-volume-off':isMute, 'glyphicon-volume-up':!isMute}"></i> </a></li>
     </ul>
     <div class="clearfix"></div>
 </div>
