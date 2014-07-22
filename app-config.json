@@ -5,7 +5,7 @@
       "templateUrl":"pages/slide-materi.html",
       "class":"primary",
       "animate":"animated bounceIn",
-      "materi": ["./materi/a-0.html", "./materi/a-1.html"]
+      "materi": ["./materi/a-0.html"]
     }, {
       "label":"Alat-Alat Pernapasan",
       "templateUrl":"pages/slide-materi.html",
@@ -23,7 +23,7 @@
       "templateUrl":"pages/slide-materi.html",
       "class":"info",
       "animate":"animated bounceIn",
-      "materi": ["./materi/c-0.html", "./materi/c-1.html", "./materi/c-2.html"]
+      "materi": ["./materi/d-0.html", "./materi/d-1.html"]
     }
   ],
   "quiz": [

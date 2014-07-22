@@ -1,11 +1,33 @@
 <section id="materi-cont" class="full-block bg-1">
-    <div id="materi-area" class="bg-{{currentSlide.class}}">
-        <div>
-            <div ng-include="currentMateri" id="current-materi"></div>
+    <div>
+        <div class="breadcrumb">
+            <a href="#" ng-repeat="slide in slides" ng-click="selectSlide(slide)" ng-mouseenter="playSound('click')" ng-class="{active:currentSlide==slide}">{{ slide.label }}</a>
         </div>
-        <ul class="menu bottom-right" ng-show="showPrevNext()">
-            <li><a class="button" href="javascript:void(0);" ng-click="selectMateri(-1)"><i class="glyphicon glyphicon-chevron-left"></i></a></li>
-            <li><a class="button" href="javascript:void(0);" ng-click="selectMateri(1)"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
-        </ul>
+        <div id="materi-area" class="bg-{{currentSlide.class}}">
+            <div>
+                <div ng-include="currentMateri" id="current-materi" custom-scroll></div>
+            </div>
+            <ul class="menu bottom-right" ng-show="showPrevNext()">
+                <li><a class="button" href="javascript:void(0);" ng-click="selectMateri(-1)"><i class="glyphicon glyphicon-chevron-left"></i></a></li>
+                <li><a class="button" href="javascript:void(0);" ng-click="selectMateri(1)"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
     </div>
+
+    <!-- <ul class="button-cont animated shake">
+    <li ng-repeat="slide in slides" >
+    <button class="button2 btn btn-{{slide.class}}" ng-click="selectSlide(slide)"
+    ng-mouseenter="playSound('click')">
+    {{ slide.label }}
+    </button></li>
+    </ul> -->
+
+    <!-- another version - flat style with animated hover effect -->
+    <!-- <div class="breadcrumb flat">
+    <a href="#" class="active">Browse</a>
+    <a href="#">Compare</a>
+    <a href="#">Order Confirmation</a>
+    <a href="#">Checkout</a>
+    </div> -->
 </section>

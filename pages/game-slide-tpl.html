@@ -1,7 +1,13 @@
 <div id="slide-container">
     <div class="slide-content full-block">
         <div class="full-block" ng-if="!completeLoading" ng-click="restart()">
-            <div progressbar class="progress-striped"  value="loadingProgress" type="success" max="1" ng-class="{active:loadingProgress<1}"></div>
+            <div id="progress-cont">
+                <div progressbar class="progress-striped active"  value="loadingProgress" type="success" max="1"></div>
+                <div>
+                    <span ng-if="loadingProgress<1">Please wait..</span>
+                    <span ng-if="loadingProgress>=1">Click untuk memulai..</span>
+                </div>
+            </div>
         </div>
         <div class="full-block {{currentSlide.animate}}" ng-include="currentSlide.templateUrl" ng-if="completeLoading"></div>
     </div>

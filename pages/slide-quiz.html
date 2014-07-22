@@ -39,10 +39,10 @@
     </table>
     <div class="quiz-result" ng-show="quizState == 'result'">
         <div class="title">
-            Skor
+            Skor Terbaik : {{bestScore||0}} | Skor Kamu : {{currentQuiz.rating}}
         </div>
         <span rating value="currentQuiz.rating" max="currentQuiz.maxRating" readonly="true"></span>
-        <div class="button" ng-click="quizSlide.click()">
+        <div class="button big-button" ng-click="quizSlide.click()">
             <i class="glyphicon glyphicon-refresh"></i>
         </div>
     </div>

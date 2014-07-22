@@ -1,5 +1,5 @@
-angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
-.directive('gameSlide',['$http', '$interval', '$timeout', function($http, $interval, $timeout){
+angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate', ])
+.directive('gameSlide',['$http', '$interval', '$timeout', '$store', function($http, $interval, $timeout, $store){
     return {
         templateUrl:'pages/game-slide-tpl.html',
         replace:true,
@@ -53,6 +53,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                     {src:'click.ogg', id:'click'},
                     {src:'Chill.ogg', id:'chill'},
                     {src:'Chillvolution.ogg', id:'chillvolution'},
+                    {src:'futuristic.ogg', id:'futuristic'},
                 ];
                 createjs.Sound.alternateExtensions = ['mp3'];
                 preload = new createjs.LoadQueue(true, assetsPath);
@@ -62,6 +63,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                 preload.loadManifest(manifest);
             };
 
+            $scope.loadingProgress = 0;
             function updateLoading(event) {
                 $scope.$apply(function() {
                     $scope.loadingProgress = event.progress;
@@ -71,14 +73,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
             function doneLoading() {
             }
 
-            $scope.restart = function() {
-                if ($scope.loadingProgress == 1) {
-                    $scope.completeLoading = true;
-                    $scope.selectSlide($scope.homeSlide);
-                }
-            };
-
-            $scope.isMute = false;
+            $scope.isMute = $store.get('muted') ? $store.get('muted') : false;
             $scope.toogleMute = function(apply) {
                 createjs.Sound.setMute(!$scope.isMute);
                 if(!apply==true)
@@ -87,12 +82,22 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                     $scope.$apply(function(){
                         $scope.isMute = !$scope.isMute;
                     });
+                $store.set('muted', $scope.isMute);
             };
 
             $scope.playSound = function(id,vol) {
                 id = id ? id : 'click';
                 vol = vol ? vol : 0.1;
                 createjs.Sound.play(id, {interrupt:createjs.Sound.INTERRUPT_ANY, volume:vol});
+            };
+
+            $scope.restart = function() {
+                if ($scope.loadingProgress == 1) {
+                    $scope.completeLoading = true;
+                    $scope.selectSlide($scope.homeSlide);
+
+                    createjs.Sound.setMute($scope.isMute);
+                }
             };
 
             // Quiz Ctrl
@@ -207,9 +212,14 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
                 }
             };
 
+            $store.bind($scope, 'scores', 0);
+            $scope.bestScore = 0;
             function calculateRating() {
                 $scope.playSound('futuristic', 0.5);
                 $scope.currentQuiz.rating = Math.ceil($scope.currentQuiz.trueAnswer / $scope.config.quiz.length * $scope.currentQuiz.maxRating);
+                $scope.bestScore=$store.get('scores');
+                if(!$scope.bestScore || $scope.bestScore<$scope.currentQuiz.rating)
+                    $store.set('scores', $scope.currentQuiz.rating);
                 return $scope.quizState = 'result';
             }
             //--> End Quiz Ctrl
@@ -1115,6 +1125,34 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate'])
             });
             elem.on('$destroy', function() {
                 stage.clear();
+            });
+        }
+    };
+}]).directive('customScroll',[function(){
+    return {
+        link : function(scope, elem, attrs, ctrl) {
+            var opt = {
+                theme : 'yellow',
+                autoHideScrollbar : false,
+                scrollInertia : 0,
+                autoDraggerLength : false,
+                mouseWheel : true,
+                mouseWheelPixels : 20,
+                // scrollButtons:{
+                // enable : false,
+                // scrollType : 'continuous',
+                // scrollSpeed : 0,
+                // scrollAmount : 0,
+                // },
+                // callbacks : {
+                // onTotalScroll : function() {
+                // console.log("scrolled to end of content.", elem);
+                // }
+                // }
+              };
+            elem.ready(function(){
+            console.log(elem);
+               jQuery(elem).mCustomScrollbar(opt);
             });
         }
     };
