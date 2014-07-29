@@ -11,27 +11,74 @@
                         <td colspan="4" ng-bind-html="currentQest.quest"></td>
                     </tr>
                     <tr class="answer">
-                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[0].id)">a</span></td><td ng-bind-html="currentQest.chooises[0].text"></td>
-                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[2].id)">c</span></td><td ng-bind-html="currentQest.chooises[2].text"></td>
+                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[0].id)">a</span></td>
+                        <td>
+                            <div class="popover top" style="top: -55px; display: block;" ng-if="currentQest.answer==currentQest.chooises[0].id" ng-show="showAnswer">
+                                <div class="arrow"></div>
+                                <div class="popover-inner">
+                                    <div class="popover-content">
+                                        <strong>Jawaban Benar</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-bind-html="currentQest.chooises[0].text"></div>
+                            </td>
+                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[2].id)">c</span></td>
+                        <td>
+                            <div class="popover top" style="top: -55px; display: block;" ng-if="currentQest.answer==currentQest.chooises[2].id" ng-show="showAnswer">
+                                <div class="arrow"></div>
+                                <div class="popover-inner">
+                                    <div class="popover-content">
+                                        <strong>Jawaban Benar</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-bind-html="currentQest.chooises[2].text"></div>
+                        </td>
                     </tr>
                     <tr class="answer">
-                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[1].id)">b</span></td><td ng-bind-html="currentQest.chooises[1].text"></td>
-                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[3].id)">d</span></td><td ng-bind-html="currentQest.chooises[3].text"></td>
+                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[1].id)">b</span></td>
+                        <td>
+                            <div class="popover top" style="top: -55px; display: block;" ng-if="currentQest.answer==currentQest.chooises[1].id" ng-show="showAnswer">
+                                <div class="arrow"></div>
+                                <div class="popover-inner">
+                                    <div class="popover-content">
+                                        <strong>Jawaban Benar</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-bind-html="currentQest.chooises[1].text"></div>
+                        </td>
+                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[3].id)">d</span></td>
+                        <td>
+                            <div class="popover top" style="top: -55px; display: block;" ng-if="currentQest.answer==currentQest.chooises[3].id" ng-show="showAnswer">
+                                <div class="arrow"></div>
+                                <div class="popover-inner">
+                                    <div class="popover-content">
+                                        <strong>Jawaban Benar</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-bind-html="currentQest.chooises[3].text"></div>
+                        </td>
                     </tr>
                     <tr class="answer">
-                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[4].id)">e</span></td><td ng-bind-html="currentQest.chooises[4].text"></td>
+                        <td class="chooises"><span class="button" ng-click="answerQuiz(currentQest.chooises[4].id)">e</span></td>
+                        <td>
+                            <div class="popover top" style="top: -55px; display: block;" ng-if="currentQest.answer==currentQest.chooises[4].id" ng-show="showAnswer">
+                                <div class="arrow"></div>
+                                <div class="popover-inner">
+                                    <div class="popover-content">
+                                        <strong>Jawaban Benar</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-bind-html="currentQest.chooises[4].text"></div>
+                        </td>
                         <td class="disabled" colspan="2"></td>
                     </tr>
                 </table>
 
-                        <div class="popover top" style="top: -12px; display: block;" ng-show="showAnswer">
-                            <div class="arrow"></div>
-                            <div class="popover-inner">
-                                <div class="popover-content">
-                                    <strong>{{currentQest.chooises[currentQest.answer].text}}</strong>
-                                </div>
-                            </div>
-                        </div>
                 </td>
             </tr>
 
@@ -39,9 +86,12 @@
     </table>
     <div class="quiz-result" ng-show="quizState == 'result'">
         <div class="title">
-            Skor Terbaik : {{bestScore||0}} | Skor Kamu : {{currentQuiz.rating}}
+            Skor Terbaik : {{bestScore||0}} | Jawaban Benar : {{currentQuiz.trueAnswer}}
         </div>
         <span rating value="currentQuiz.rating" max="currentQuiz.maxRating" readonly="true"></span>
+        <div class="title">
+            {{ currentQuiz.status }}
+        </div>
         <div class="button big-button" ng-click="quizSlide.click()">
             <i class="glyphicon glyphicon-refresh"></i>
         </div>

@@ -102,6 +102,7 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate', ])
 
             // Quiz Ctrl
             var quizInterval;
+            var peringkat = ['Belajar Lagi', 'Cukup Pandai', 'Pandai', 'Excellent'];
             $scope.quizState = 'quest';
             $scope.currentQuiz = {
                 trueAnswer:0,
@@ -110,7 +111,8 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate', ])
                 startTime:null,
                 finishTime:null,
                 rating:0,
-                maxRating:10
+                maxRating:4,
+                status : null
             };
             $scope.currentQest = null;
             $scope.elapedTime = '0:0:0';
@@ -217,9 +219,17 @@ angular.module('DeeDirective',['ngSanitize', 'Constructor', 'ngAnimate', ])
             function calculateRating() {
                 $scope.playSound('futuristic', 0.5);
                 $scope.currentQuiz.rating = Math.ceil($scope.currentQuiz.trueAnswer / $scope.config.quiz.length * $scope.currentQuiz.maxRating);
+                if ($scope.currentQuiz.trueAnswer<=5)
+                    $scope.currentQuiz.status = peringkat[0];
+                else if ($scope.currentQuiz.trueAnswer>5 && $scope.currentQuiz.trueAnswer<=10)
+                    $scope.currentQuiz.status = peringkat[1];
+                else if ($scope.currentQuiz.trueAnswer>10 && $scope.currentQuiz.trueAnswer<=15)
+                    $scope.currentQuiz.status = peringkat[2];
+                else if ($scope.currentQuiz.trueAnswer>15)
+                    $scope.currentQuiz.status = peringkat[3];
                 $scope.bestScore=$store.get('scores');
-                if(!$scope.bestScore || $scope.bestScore<$scope.currentQuiz.rating)
-                    $store.set('scores', $scope.currentQuiz.rating);
+                if(!$scope.bestScore || $scope.bestScore<$scope.currentQuiz.trueAnswer)
+                    $store.set('scores', $scope.currentQuiz.trueAnswer);
                 return $scope.quizState = 'result';
             }
             //--> End Quiz Ctrl

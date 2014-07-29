@@ -345,6 +345,7 @@ height: 85%;
     padding-right: 10px;
     vertical-align: top;
     padding-bottom: 10px;
+    position: relative;
 }
 #quiz-cont table .quest td {
     font-size: 30px;
