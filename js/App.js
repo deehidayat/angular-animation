@@ -1,4 +1,93 @@
-angular.module('DeeAngular', ['ui.bootstrap', 'ui.router', 'DeeDirective']).config(['$stateProvider', '$urlRouterProvider',
+angular.module('DeeAngular', ['ui.bootstrap', 'ui.router', 'DeeDirective'])
+.directive('imgToCanvas',['Bubble', function(Bubble){
+    return {
+        template : '<canvas class="img-to-canvas"/>',
+        replace : true,
+        scope : {
+          src : '@'
+        },
+        link : function(scope, elem, attrs, ctrl) {
+            var canvas, stage, ctx, img = new Image();
+            var bmp, speechBubble;
+            img.onload = handleImageLoad;
+            img.src = scope.src;
+
+            function handleImageLoad() {
+                canvas = elem[0];
+                stage = new createjs.Stage(canvas);
+                stage.enableMouseOver(10);
+                stage.autoClear = true;
+
+                bmp = new createjs.Bitmap(img);
+                // bmp.regX = img.width >> 1;
+                // bmp.regY = img.height >> 1;
+                // bmp.x = canvas.width - (img.width/2)>>1;
+                // bmp.y = 140+canvas.height - (img.height/2)>>1;
+                bmp.x = 50;
+                bmp.y = 120;
+                bmp.scaleX = bmp.scaleY = 0.5;
+                bmp.addEventListener('mouseover', function(event){
+                   showSpeech(1);
+                });
+                bmp.addEventListener('mouseout', function(event){
+                   removeSpeech();
+                });
+                stage.addChild(bmp);
+
+                speechBubble = Bubble.create();
+                speechBubble.scaleX = speechBubble.scaleY = 1;
+                speechBubble.x = 0; speechBubble.y = 0;
+                speechBubble.addEventListener('animationend', function(e){
+                    if(e.name=='death')
+                        speechBubble.visible = false;
+                });
+                speechBubble.visible = true;
+                stage.addChild(speechBubble);
+                //start game timer
+                if (!createjs.Ticker.hasEventListener('tick')) {
+                    createjs.Ticker.timingMode = createjs.Ticker.RAF;
+                    createjs.Ticker.setFPS(24);
+                    // createjs.Ticker.setInterval(50);        // in ms
+                    var a = createjs.Ticker.addEventListener('tick', function(event) {
+                        console.log('on tick');
+                        var deltaS = event.delta/1000;
+                        // showSpeech(1);
+                        stage.update();
+                    });
+                    // console.log('register tick', a);
+                }
+                stage.update();
+            }
+
+            function removeSpeech() {
+                speechBubble.removeText();
+                speechBubble.gotoAndPlay('death');
+            };
+            function showSpeech(scaleX) {
+                speechBubble.scaleX = scaleX;
+                speechBubble.handleText('Silahkan pilih materi');
+
+                if(speechBubble.currentAnimation == 'start') {
+                    speechBubble.visible = true;
+                    speechBubble.gotoAndPlay('birth');
+                }
+            }
+            function tick(event) {
+                // console.log('on tick');
+                var deltaS = event.delta/1000;
+                // showSpeech(1);
+                stage.update();
+            }
+            elem.on('$destroy', function() {
+                createjs.Ticker.removeAllEventListeners();
+                createjs.Ticker.reset();
+                stage.removeAllChildren();
+                stage.clear();
+            });
+        }
+    };
+}])
+.config(['$stateProvider', '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
 
     var home = {

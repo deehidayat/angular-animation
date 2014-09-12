@@ -522,8 +522,8 @@ height: 300px;
 #guru-cont {
 display: inline-block;
 position: absolute;
-left: 400px;
-bottom: 100px;
+left: 350px;
+top: 100px;
 }
 #about-cont td * {
 font-family: 'SketchRockwell' !important;
