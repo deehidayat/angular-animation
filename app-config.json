@@ -29,7 +29,7 @@
   "quiz": [
     {
       "quest": "Alat pernapasan manusia terdiri atas ...",
-      "answer": 0,
+      "answer": 2,
       "chooises": [
         {
           "id": 0,
@@ -71,7 +71,7 @@
       ]
     }, {
       "quest": "Fase pernapasan yang dimulai dengan kontraksi otot-otot antar tulang rusuk sehingga tulang rusuk terangkat dan rongga dada membesar disebut ...",
-      "answer": 0,
+      "answer": 1,
       "chooises": [
         {
           "id": 0,
@@ -134,7 +134,7 @@
       ]
     }, {
       "quest": "Pada fase inspirasi/ekspirasi volume udara yang dimasukkan atau dikeluarkan sebanyak ... cm<sup>3</sup>",
-      "answer": 0,
+      "answer": 4,
       "chooises": [
         {
           "id": 0,
@@ -176,7 +176,7 @@
       ]
     }, {
       "quest": "Kapasitas vital paru-paru normal sebesar ...  cc",
-      "answer": 0,
+      "answer": 4,
       "chooises": [
         {
           "id": 0,
@@ -260,7 +260,7 @@
       ]
     }, {
       "quest": "Kantong udara yang terletak diantara tulang leher disebut sebagai ...",
-      "answer": 0,
+      "answer": 1,
       "chooises": [
         {
           "id": 0,
@@ -288,7 +288,7 @@
           "text": "<em>bifurcatio</em>"
         }, {
           "id": 1,
-          "text": "<em>syrinx</em>"
+          "text": "<em>siring</em>"
         }, {
           "id": 2,
           "text": "trakea"
@@ -319,6 +319,132 @@
         }, {
           "id": 4,
           "text": "<em>saccuss thoracalis posterior</em>"
+        }
+      ]
+    }, {
+      "quest": "Otot-otot antar tulang rusuk berkontraksi sehingga tulang rusuk terangkat,maka fase tersebut dinamakan",
+      "answer": 1,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>Ekspirasi</em>"
+        }, {
+          "id": 1,
+          "text": "<em>Inspirasi</em>"
+        }, {
+          "id": 2,
+          "text": "<em>Diafragma</em>"
+        }, {
+          "id": 3,
+          "text": "<em>Pernapasan dada</em>"
+        }, {
+          "id": 4,
+          "text": "<em>Pernapasan perut</em>"
+        }
+      ]
+    }, {
+      "quest": "Pada saat terjadi kontraksi diafragma,Rongga badan terbagi menjadi dua sebutkan rongga tersebut",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>Rongga dada dan rongga perut</em>"
+        }, {
+          "id": 1,
+          "text": "<em>Rongga hidung dan rongga badan</em>"
+        }, {
+          "id": 2,
+          "text": "<em>Rongga perut dan rongga telinga</em>"
+        }, {
+          "id": 3,
+          "text": "<em>Rongga telinga dan rongga dada</em>"
+        }, {
+          "id": 4,
+          "text": "<em>Rongga badan dan rongga perut</em>"
+        }
+      ]
+    }, {
+      "quest": "Adanya kontraksi diafragma dan otot dinding perut disebut",
+      "answer": 1,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>Pernapasan dada</em>"
+        }, {
+          "id": 1,
+          "text": "<em>Pernapasan perut</em>"
+        }, {
+          "id": 2,
+          "text": "<em>Pernapasan inspirasi</em>"
+        }, {
+          "id": 3,
+          "text": "<em>Pernapasan diafragma</em>"
+        }, {
+          "id": 4,
+          "text": "<em>Pernapasan ekspirasi</em>"
+        }
+      ]
+    }, {
+      "quest": "Sebutkan posisi Pengambilan udara pada burung terjadi ketika sayapnya",
+      "answer": 0,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>Terangkat</em>"
+        }, {
+          "id": 1,
+          "text": "<em>Tersembunyi</em>"
+        }, {
+          "id": 2,
+          "text": "<em>Terbuka</em>"
+        }, {
+          "id": 3,
+          "text": "<em>Tertutup</em>"
+        }, {
+          "id": 4,
+          "text": "<em>Terselubung</em>"
+        }
+      ]
+    }, {
+      "quest": "Sebutkan mekanisme pernapasan pada burung terdapat 2 fase yaitu",
+      "answer": 3,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>Fase pernapasan perut</em>"
+        }, {
+          "id": 1,
+          "text": "<em>Fase pernapasan dada</em>"
+        }, {
+          "id": 2,
+          "text": "<em>Fase pernapasan diafragma</em>"
+        }, {
+          "id": 3,
+          "text": "<em>Fase inspirasi dan fase ekspirasi</em>"
+        }, {
+          "id": 4,
+          "text": "<em>Fase pernapasan hidung</em>"
+        }
+      ]
+    }, {
+      "quest": "Rongga dada mengecil dan paru-paru mengecil sehingga udara didalam kantong udara akan dikeluarkan melalui paru-paru proses tersebut dinamakan",
+      "answer": 1,
+      "chooises": [
+        {
+          "id": 0,
+          "text": "<em>Proses inspirasi</em>"
+        }, {
+          "id": 1,
+          "text": "<em>Proses ekspirasi</em>"
+        }, {
+          "id": 2,
+          "text": "<em>Proses faring</em>"
+        }, {
+          "id": 3,
+          "text": "<em>Proses laring</em>"
+        }, {
+          "id": 4,
+          "text": "<em>Proses taring</em>"
         }
       ]
     }
